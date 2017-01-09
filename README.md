@@ -32,3 +32,8 @@ var extensionList = new [] {
 };
 var path = StandaloneFileBrowser.SaveFilePanel("Save File", "", "MySaveFile", extensionList);
 ```
+Mac Screenshot
+![Alt text](/Images/sfb_mac.jpg?raw=true "Mac")
+
+Windows Screenshot
+![Alt text](/Images/sfb_win.jpg?raw=true "Win")
