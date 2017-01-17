@@ -1,12 +1,13 @@
-# UnityStandaloneFileBrowser
+# Unity Standalone File Browser
 
-A simple wrapper for native file dialogs.
+A simple wrapper for native file dialogs on Windows/Mac.
 
-Features:
-
+- Works in editor and runtime.
 - Open file/folder, save file dialogs supported.
 - Multiple file selection.
-- File type filter
+- File extension filter.
+- Windows version requires .NET 2.0 api compatibility level 
+- Linux is not supported.
 
 Example usage:
 
