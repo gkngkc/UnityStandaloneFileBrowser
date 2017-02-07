@@ -18,11 +18,7 @@ namespace SFB {
             }
             fd.Multiselect = multiselect;
             if (!string.IsNullOrEmpty(directory)) {
-                var directoryPath = Path.GetFullPath(directory);
-                if (!directoryPath.EndsWith("\\")) {
-                    directoryPath += "\\";
-                }
-                fd.FileName = Path.GetDirectoryName(directoryPath) + Path.DirectorySeparatorChar;
+                fd.FileName = GetDirectoryPath(directory);
             }
             var res = fd.ShowDialog();
             var filenames = res == DialogResult.OK ? fd.FileNames : new string[0];
@@ -34,11 +30,7 @@ namespace SFB {
             var fd = new VistaFolderBrowserDialog();
             fd.Description = title;
             if (!string.IsNullOrEmpty(directory)) {
-                var directoryPath = Path.GetFullPath(directory);
-                if (!directoryPath.EndsWith("\\")) {
-                    directoryPath += "\\";
-                }
-                fd.SelectedPath = Path.GetDirectoryName(directoryPath) + Path.DirectorySeparatorChar;
+                fd.SelectedPath = GetDirectoryPath(directory);
             }
             var res = fd.ShowDialog();
             var filenames = res == DialogResult.OK ? new []{ fd.SelectedPath } : new string[0];
@@ -49,8 +41,18 @@ namespace SFB {
         public string SaveFilePanel(string title, string directory, string defaultName, ExtensionFilter[] extensions) {
             var fd = new VistaSaveFileDialog();
             fd.Title = title;
-            fd.InitialDirectory = string.IsNullOrEmpty(directory) ? "" : Path.GetFullPath(directory);
-            fd.FileName = defaultName;
+
+            var finalFilename = "";
+
+            if (!string.IsNullOrEmpty(directory)) {
+                finalFilename = GetDirectoryPath(directory);
+            }
+
+            if (!string.IsNullOrEmpty(defaultName)) {
+                finalFilename += defaultName;
+            }
+
+            fd.FileName = finalFilename;
             if (extensions != null) {
                 fd.Filter = GetFilterFromFileExtensionList(extensions);
                 fd.FilterIndex = 1;
@@ -90,6 +92,14 @@ namespace SFB {
             }
             filterString = filterString.Remove(filterString.Length - 1);
             return filterString;
+        }
+
+        private static string GetDirectoryPath(string directory) {
+            var directoryPath = Path.GetFullPath(directory);
+            if (!directoryPath.EndsWith("\\")) {
+                directoryPath += "\\";
+            }
+            return Path.GetDirectoryName(directoryPath) + Path.DirectorySeparatorChar;
         }
     }
 }
