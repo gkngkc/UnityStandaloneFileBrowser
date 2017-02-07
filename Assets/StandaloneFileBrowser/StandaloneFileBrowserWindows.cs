@@ -17,7 +17,13 @@ namespace SFB {
                 fd.Filter = string.Empty;
             }
             fd.Multiselect = multiselect;
-            fd.InitialDirectory = string.IsNullOrEmpty(directory) ? "" : Path.GetFullPath(directory);
+            if (!string.IsNullOrEmpty(directory)) {
+                var directoryPath = Path.GetFullPath(directory);
+                if (!directoryPath.EndsWith("\\")) {
+                    directoryPath += "\\";
+                }
+                fd.FileName = Path.GetDirectoryName(directoryPath) + Path.DirectorySeparatorChar;
+            }
             var res = fd.ShowDialog();
             var filenames = res == DialogResult.OK ? fd.FileNames : new string[0];
             fd.Dispose();
@@ -27,7 +33,13 @@ namespace SFB {
         public string[] OpenFolderPanel(string title, string directory, bool multiselect) {
             var fd = new VistaFolderBrowserDialog();
             fd.Description = title;
-            fd.SelectedPath = string.IsNullOrEmpty(directory) ? "" : Path.GetFullPath(directory);
+            if (!string.IsNullOrEmpty(directory)) {
+                var directoryPath = Path.GetFullPath(directory);
+                if (!directoryPath.EndsWith("\\")) {
+                    directoryPath += "\\";
+                }
+                fd.SelectedPath = Path.GetDirectoryName(directoryPath) + Path.DirectorySeparatorChar;
+            }
             var res = fd.ShowDialog();
             var filenames = res == DialogResult.OK ? new []{ fd.SelectedPath } : new string[0];
             fd.Dispose();
