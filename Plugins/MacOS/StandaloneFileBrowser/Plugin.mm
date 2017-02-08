@@ -86,7 +86,8 @@ const char* DialogSaveFilePanel(const char* title, const char* directory, const 
 
     if ([panel runModal] == NSFileHandlingPanelOKButton) {
         if ([[panel URLs] count] > 0) {
-            return [[panel URLs] componentsJoinedByString:@","];
+            NSString *seperator = [NSString stringWithFormat:@"%c", 28];
+            return [[panel URLs] componentsJoinedByString:seperator];
         }
     }
 
