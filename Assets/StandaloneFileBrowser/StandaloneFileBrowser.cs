@@ -12,18 +12,14 @@ namespace SFB {
     public class StandaloneFileBrowser {
         private static IStandaloneFileBrowser _platformWrapper = null;
 
-        private static IStandaloneFileBrowser GetPlatformWrapper() {
-            if (_platformWrapper == null) {
+        static StandaloneFileBrowser() {
     #if UNITY_STANDALONE_OSX
-                _platformWrapper = new StandaloneFileBrowserMac();
+            _platformWrapper = new StandaloneFileBrowserMac();
     #elif UNITY_STANDALONE_WIN
-                _platformWrapper = new StandaloneFileBrowserWindows();
+            _platformWrapper = new StandaloneFileBrowserWindows();
     #elif UNITY_EDITOR
-                _platformWrapper = new StandaloneFileBrowserEditor();
+            _platformWrapper = new StandaloneFileBrowserEditor();
     #endif
-            }
-
-            return _platformWrapper;
         }
 
         /// <summary>
@@ -48,7 +44,7 @@ namespace SFB {
         /// <param name="multiselect">Allow multiple file selection</param>
         /// <returns>Returns array of chosen paths. Zero length array when cancelled</returns>
         public static string[] OpenFilePanel(string title, string directory, ExtensionFilter[] extensions, bool multiselect) {
-            return GetPlatformWrapper().OpenFilePanel(title, directory, extensions, multiselect);
+            return _platformWrapper.OpenFilePanel(title, directory, extensions, multiselect);
         }
 
         /// <summary>
@@ -60,7 +56,7 @@ namespace SFB {
         /// <param name="multiselect"></param>
         /// <returns>Returns array of chosen paths. Zero length array when cancelled</returns>
         public static string[] OpenFolderPanel(string title, string directory, bool multiselect) {
-            return GetPlatformWrapper().OpenFolderPanel(title, directory, multiselect);
+            return _platformWrapper.OpenFolderPanel(title, directory, multiselect);
         }
 
         /// <summary>
@@ -85,7 +81,7 @@ namespace SFB {
         /// <param name="extensions">List of extension filters. Filter Example: new ExtensionFilter("Image Files", "jpg", "png")</param>
         /// <returns>Returns chosen path. Empty string when cancelled</returns>
         public static string SaveFilePanel(string title, string directory, string defaultName, ExtensionFilter[] extensions) {
-            return GetPlatformWrapper().SaveFilePanel(title, directory, defaultName, extensions);
+            return _platformWrapper.SaveFilePanel(title, directory, defaultName, extensions);
         }
     }
 }
