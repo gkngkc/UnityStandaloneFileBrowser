@@ -78,7 +78,9 @@ const char* DialogSaveFilePanel(const char* title, const char* directory, const 
         [panel setAllowedFileTypes:(NSArray*)[extensions objectAtIndex:0]];
     }
 
-    [panel setTitle:title];
+    if ([title length] != 0) {
+        [panel setMessage:title];
+    }
     [panel setCanChooseFiles:canChooseFiles];
     [panel setCanChooseDirectories:canChooseFolders];
     [panel setAllowsMultipleSelection:multiselect];
@@ -129,7 +131,10 @@ const char* DialogSaveFilePanel(const char* title, const char* directory, const 
         [panel setAllowedFileTypes:(NSArray*)[extensions objectAtIndex:0]];
     }
 
-    [panel setTitle:title];
+
+    if ([title length] != 0) {
+        [panel setMessage:title];
+    }
     [panel setDirectoryURL:[NSURL fileURLWithPath:directory]];
     [panel setNameFieldStringValue:defaultName];
 
