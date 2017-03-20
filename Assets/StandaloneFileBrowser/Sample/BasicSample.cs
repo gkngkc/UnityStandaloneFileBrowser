@@ -1,12 +1,13 @@
-﻿using UnityEngine;
+using System.Collections;
+using UnityEngine;
 using SFB;
 
-public class StandaloneFileBrowserSample : MonoBehaviour {
+public class BasicSample : MonoBehaviour {
     private string _path;
 
     void OnGUI() {
-        var guiScale = new Vector3(Screen.width / 640.0f, Screen.height / 480.0f, 1.0f);
-        Matrix4x4.TRS(Vector3.zero, Quaternion.identity, guiScale);
+        var guiScale = new Vector3(Screen.width / 800.0f, Screen.height / 600.0f, 1.0f);
+        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, guiScale);
 
         GUILayout.Space(20);
         GUILayout.BeginHorizontal();
@@ -89,7 +90,7 @@ public class StandaloneFileBrowserSample : MonoBehaviour {
         GUILayout.EndHorizontal();
     }
 
-    private void WriteResult(string[] paths) {
+    public void WriteResult(string[] paths) {
         if (paths.Length == 0) {
             return;
         }

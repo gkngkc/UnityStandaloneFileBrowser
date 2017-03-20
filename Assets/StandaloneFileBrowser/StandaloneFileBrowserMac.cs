@@ -1,4 +1,4 @@
-﻿#if UNITY_STANDALONE_OSX
+#if UNITY_STANDALONE_OSX
 
 using System;
 using System.Runtime.InteropServices;
