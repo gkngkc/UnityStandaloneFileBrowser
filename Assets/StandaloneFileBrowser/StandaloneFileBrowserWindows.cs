@@ -1,11 +1,27 @@
 #if UNITY_STANDALONE_WIN
 
+using System;
 using System.IO;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
 using Ookii.Dialogs;
 
+
 namespace SFB {
+    // For fullscreen support
+    // - WindowWrapper class and GetActiveWindow() are required for modal file dialog.
+    // - "PlayerSettings/Visible In Background" should be enabled, otherwise when file dialog opened app window minimizes automatically.
+
+    public class WindowWrapper : IWin32Window {
+        private IntPtr _hwnd;
+        public WindowWrapper(IntPtr handle) { _hwnd = handle; }
+        public IntPtr Handle { get { return _hwnd; } }
+    }
+
     public class StandaloneFileBrowserWindows : IStandaloneFileBrowser {
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetActiveWindow();
+        
         public string[] OpenFilePanel(string title, string directory, ExtensionFilter[] extensions, bool multiselect) {
             var fd = new VistaOpenFileDialog();
             fd.Title = title;
@@ -20,7 +36,7 @@ namespace SFB {
             if (!string.IsNullOrEmpty(directory)) {
                 fd.FileName = GetDirectoryPath(directory);
             }
-            var res = fd.ShowDialog();
+            var res = fd.ShowDialog(new WindowWrapper(GetActiveWindow()));
             var filenames = res == DialogResult.OK ? fd.FileNames : new string[0];
             fd.Dispose();
             return filenames;
@@ -32,7 +48,7 @@ namespace SFB {
             if (!string.IsNullOrEmpty(directory)) {
                 fd.SelectedPath = GetDirectoryPath(directory);
             }
-            var res = fd.ShowDialog();
+            var res = fd.ShowDialog(new WindowWrapper(GetActiveWindow()));
             var filenames = res == DialogResult.OK ? new []{ fd.SelectedPath } : new string[0];
             fd.Dispose();
             return filenames;
@@ -64,7 +80,7 @@ namespace SFB {
                 fd.Filter = string.Empty;
                 fd.AddExtension = false;
             }
-            var res = fd.ShowDialog();
+            var res = fd.ShowDialog(new WindowWrapper(GetActiveWindow()));
             var filename = res == DialogResult.OK ? fd.FileName : "";
             fd.Dispose();
             return filename;
