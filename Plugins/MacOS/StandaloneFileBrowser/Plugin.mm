@@ -97,7 +97,7 @@ const char* DialogSaveFilePanel(const char* title, const char* directory, const 
         }
     }
     @catch (NSException *exception) {
-        NSLog(@"%@", exception.reason);
+        NSLog(@"SFB::dialogOpenFilePanel Exception: %@", exception.reason);
     }
 
     return @"";
@@ -138,7 +138,6 @@ const char* DialogSaveFilePanel(const char* title, const char* directory, const 
             [panel setAllowedFileTypes:(NSArray*)[extensions objectAtIndex:0]];
         }
 
-
         if ([title length] != 0) {
             [panel setMessage:title];
         }
@@ -153,7 +152,7 @@ const char* DialogSaveFilePanel(const char* title, const char* directory, const 
         }
     }
     @catch (NSException *exception) {
-        NSLog(@"%@", exception.reason);
+        NSLog(@"SFB::dialogSaveFilePanel Exception%@", exception.reason);
     }
 
     return @"";
@@ -185,7 +184,7 @@ const char* DialogSaveFilePanel(const char* title, const char* directory, const 
             [extensions addObject:exts];
         }
     } @catch (NSException *exception) {
-        NSLog(@"%@", exception.reason);
+        NSLog(@"SFB::parseFilter Exception%@", exception.reason);
     }
 }
 
@@ -210,17 +209,17 @@ const char* DialogSaveFilePanel(const char* title, const char* directory, const 
 
     NSString* firstExtension = (NSString*)[[_extensions objectAtIndex:selectedItemIndex] objectAtIndex:0];
     if ([firstExtension isEqualToString:@""] || [firstExtension isEqualToString:@"*"]) {
-        [(NSOpenPanel*)[self panel] setAllowedFileTypes:nil];
+        [((NSOpenPanel*)_panel) setAllowedFileTypes:nil];
     }
     else {
-        [(NSOpenPanel*)[self panel] setAllowedFileTypes:[_extensions objectAtIndex:selectedItemIndex]];
+        [((NSOpenPanel*)_panel) setAllowedFileTypes:[_extensions objectAtIndex:selectedItemIndex]];
     }
 }
 
 - (void)selectFormatSave:(id)sender {
     NSPopUpButton* button = (NSPopUpButton *)sender;
     NSInteger selectedItemIndex = [button indexOfSelectedItem];
-    NSString* nameFieldString = [(NSSavePanel*)[self panel] nameFieldStringValue];
+    NSString* nameFieldString = [((NSSavePanel*)_panel) nameFieldStringValue];
     NSString* trimmedNameFieldString = [nameFieldString stringByDeletingPathExtension];
 
     NSString* ext = [[_extensions objectAtIndex:selectedItemIndex] objectAtIndex:0];
@@ -228,14 +227,14 @@ const char* DialogSaveFilePanel(const char* title, const char* directory, const 
 
     if ([ext isEqualToString:@""] || [ext isEqualToString:@"*"]) {
         nameFieldStringWithExt = trimmedNameFieldString;
-        [(NSSavePanel*)[self panel] setAllowedFileTypes:nil];
+        [((NSSavePanel*)_panel) setAllowedFileTypes:nil];
     }
     else {
         nameFieldStringWithExt = [NSString stringWithFormat:@"%@.%@", trimmedNameFieldString, ext];
-        [(NSSavePanel*)[self panel] setAllowedFileTypes:@[ext]];
+        [((NSSavePanel*)_panel) setAllowedFileTypes:@[ext]];
     }
     
-    [(NSSavePanel*)[self panel] setNameFieldStringValue:nameFieldStringWithExt];
+    [((NSSavePanel*)_panel) setNameFieldStringValue:nameFieldStringWithExt];
 }
 
 @end
