@@ -20,6 +20,10 @@ public class BasicSample : MonoBehaviour {
             WriteResult(StandaloneFileBrowser.OpenFilePanel("Open File", "", "", false));
         }
         GUILayout.Space(5);
+        if (GUILayout.Button("Open File Async")) {
+            StandaloneFileBrowser.OpenFilePanelAsync("Open File", "", "", false, (string[] paths) => { WriteResult(paths); });
+        }
+        GUILayout.Space(5);
         if (GUILayout.Button("Open File Multiple")) {
             WriteResult(StandaloneFileBrowser.OpenFilePanel("Open File", "", "", true));
         }
@@ -50,6 +54,10 @@ public class BasicSample : MonoBehaviour {
             WriteResult(paths);
         }
         GUILayout.Space(5);
+        if (GUILayout.Button("Open Folder Async")) {
+            StandaloneFileBrowser.OpenFolderPanelAsync("Select Folder", "", true, (string[] paths) => { WriteResult(paths); });
+        }
+        GUILayout.Space(5);
         if (GUILayout.Button("Open Folder Directory")) {
             var paths = StandaloneFileBrowser.OpenFolderPanel("Select Folder", Application.dataPath, true);
             WriteResult(paths);
@@ -61,6 +69,10 @@ public class BasicSample : MonoBehaviour {
 
         if (GUILayout.Button("Save File")) {
             _path = StandaloneFileBrowser.SaveFilePanel("Save File", "", "", "");
+        }
+        GUILayout.Space(5);
+        if (GUILayout.Button("Save File Async")) {
+            StandaloneFileBrowser.SaveFilePanelAsync("Save File", "", "", "", (string path) => { WriteResult(path); });
         }
         GUILayout.Space(5);
         if (GUILayout.Button("Save File Default Name")) {
@@ -99,5 +111,9 @@ public class BasicSample : MonoBehaviour {
         foreach (var p in paths) {
             _path += p + "\n";
         }
+    }
+
+    public void WriteResult(string path) {
+        _path = path;
     }
 }

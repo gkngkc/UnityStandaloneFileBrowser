@@ -3,9 +3,14 @@
 #import <AppKit/AppKit.h>
 
 extern "C" {
-    const char* DialogOpenFilePanel(const char*, const char*, const char*, bool multiselect);
-    const char* DialogOpenFolderPanel(const char*, const char*, bool multiselect);
+    typedef void (*callbackFunc)(const char *);
+    const char* DialogOpenFilePanel(const char*, const char*, const char*, bool);
+    const char* DialogOpenFolderPanel(const char*, const char*, bool);
     const char* DialogSaveFilePanel(const char*, const char*, const char*, const char*);
+
+    void DialogOpenFilePanelAsync(const char*, const char*, const char*, bool, callbackFunc);
+    void DialogOpenFolderPanelAsync(const char*, const char*, bool, callbackFunc);
+    void DialogSaveFilePanelAsync(const char*, const char*, const char*, const char*, callbackFunc);
 }
 
 @interface PopUpButtonHandler : NSObject {
@@ -36,6 +41,30 @@ extern "C" {
                        directory:(NSString*)directory
                      defaultName:(NSString*)defaultName
                          filters:(NSString*)filters;
+
+- (void)dialogOpenFilePanelAsync:(NSString*)title
+                       directory:(NSString*)directory
+                         filters:(NSString*)filters
+                     multiselect:(BOOL)multiselect
+                  canChooseFiles:(BOOL)canChooseFiles
+                canChooseFolders:(BOOL)canChooseFolders;
+
+- (void)dialogSaveFilePanelAsync:(NSString*)title
+                       directory:(NSString*)directory
+                     defaultName:(NSString*)defaultName
+                         filters:(NSString*)filters;
+
+- (NSOpenPanel*)createOpenPanel:(NSString*)title
+                      directory:(NSString*)directory
+                        filters:(NSString*)filters
+                    multiselect:(BOOL)multiselect
+                 canChooseFiles:(BOOL)canChooseFiles
+               canChooseFolders:(BOOL)canChooseFolders;
+
+- (NSSavePanel*)createSavePanel:(NSString*)title
+                      directory:(NSString*)directory
+                    defaultName:(NSString*)defaultName
+                        filters:(NSString*)filters;
 
 - (void)parseFilter:(NSString*)filter
             filters:(NSMutableArray*)filters

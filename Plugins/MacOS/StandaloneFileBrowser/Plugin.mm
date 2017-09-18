@@ -1,35 +1,88 @@
 #include "Plugin.pch"
 
-const char* DialogOpenFilePanel(const char* title, const char* directory, const char* filters, bool multiselect) {
+static callbackFunc asyncCallback;
+
+const char* DialogOpenFilePanel(const char* title,
+                                const char* directory,
+                                const char* filters,
+                                bool multiselect) {
     StandaloneFileBrowser* dialog = [[StandaloneFileBrowser alloc] init];
-    NSString* path = [dialog dialogOpenFilePanel:[NSString stringWithUTF8String:title]
-                                       directory:[NSString stringWithUTF8String:directory]
-                                         filters:[NSString stringWithUTF8String:filters]
-                                     multiselect:multiselect
-                                  canChooseFiles:YES
-                                canChooseFolders:NO];
-    return [path UTF8String];
+    NSString* paths = [dialog dialogOpenFilePanel:[NSString stringWithUTF8String:title]
+                                        directory:[NSString stringWithUTF8String:directory]
+                                          filters:[NSString stringWithUTF8String:filters]
+                                      multiselect:multiselect
+                                   canChooseFiles:YES
+                                 canChooseFolders:NO];
+    return [paths UTF8String];
 }
 
-const char* DialogOpenFolderPanel(const char* title, const char* directory, bool multiselect) {
+void DialogOpenFilePanelAsync(const char* title,
+                              const char* directory,
+                              const char* filters,
+                              bool multiselect,
+                              callbackFunc cb) {
+    asyncCallback = cb;
     StandaloneFileBrowser* dialog = [[StandaloneFileBrowser alloc] init];
-    NSString* path = [dialog dialogOpenFilePanel:[NSString stringWithUTF8String:title]
-                                       directory:[NSString stringWithUTF8String:directory]
-                                         filters:[NSString stringWithUTF8String:""]
-                                     multiselect:multiselect
-                                  canChooseFiles:NO
-                                canChooseFolders:YES];
-    return [path UTF8String];
+    [dialog dialogOpenFilePanelAsync:[NSString stringWithUTF8String:title]
+                           directory:[NSString stringWithUTF8String:directory]
+                             filters:[NSString stringWithUTF8String:filters]
+                         multiselect:multiselect
+                      canChooseFiles:YES
+                    canChooseFolders:NO];
 }
 
-const char* DialogSaveFilePanel(const char* title, const char* directory, const char* defaultName, const char* filters) {
+const char* DialogOpenFolderPanel(const char* title,
+                                  const char* directory,
+                                  bool multiselect) {
     StandaloneFileBrowser* dialog = [[StandaloneFileBrowser alloc] init];
-    NSString* path = [dialog dialogSaveFilePanel:[NSString stringWithUTF8String:title]
-                                       directory:[NSString stringWithUTF8String:directory]
-                                     defaultName:[NSString stringWithUTF8String:defaultName]
-                                         filters:[NSString stringWithUTF8String:filters]];
-    return [path UTF8String];
+    NSString* paths = [dialog dialogOpenFilePanel:[NSString stringWithUTF8String:title]
+                                        directory:[NSString stringWithUTF8String:directory]
+                                          filters:[NSString stringWithUTF8String:""]
+                                      multiselect:multiselect
+                                   canChooseFiles:NO
+                                 canChooseFolders:YES];
+    return [paths UTF8String];
 }
+
+void DialogOpenFolderPanelAsync(const char* title,
+                                const char* directory,
+                                bool multiselect,
+                                callbackFunc cb) {
+    asyncCallback = cb;
+    StandaloneFileBrowser* dialog = [[StandaloneFileBrowser alloc] init];
+    [dialog dialogOpenFilePanelAsync:[NSString stringWithUTF8String:title]
+                           directory:[NSString stringWithUTF8String:directory]
+                             filters:[NSString stringWithUTF8String:""]
+                         multiselect:multiselect
+                      canChooseFiles:NO
+                    canChooseFolders:YES];
+}
+
+const char* DialogSaveFilePanel(const char* title,
+                                const char* directory,
+                                const char* defaultName,
+                                const char* filters) {
+    StandaloneFileBrowser* dialog = [[StandaloneFileBrowser alloc] init];
+    NSString* paths = [dialog dialogSaveFilePanel:[NSString stringWithUTF8String:title]
+                                        directory:[NSString stringWithUTF8String:directory]
+                                      defaultName:[NSString stringWithUTF8String:defaultName]
+                                          filters:[NSString stringWithUTF8String:filters]];
+    return [paths UTF8String];
+}
+
+void DialogSaveFilePanelAsync(const char* title,
+                              const char* directory,
+                              const char* defaultName,
+                              const char* filters,
+                              callbackFunc cb) {
+    asyncCallback = cb;
+    StandaloneFileBrowser* dialog = [[StandaloneFileBrowser alloc] init];
+    [dialog dialogSaveFilePanelAsync:[NSString stringWithUTF8String:title]
+                           directory:[NSString stringWithUTF8String:directory]
+                         defaultName:[NSString stringWithUTF8String:defaultName]
+                             filters:[NSString stringWithUTF8String:filters]];
+}
+
 
 @implementation StandaloneFileBrowser
 
@@ -47,6 +100,59 @@ const char* DialogSaveFilePanel(const char* title, const char* directory, const 
                   canChooseFiles:(BOOL)canChooseFiles
                 canChooseFolders:(BOOL)canChooseFolders {
 
+    NSOpenPanel* panel = [self createOpenPanel:title
+                                     directory:directory
+                                       filters:filters
+                                   multiselect:multiselect
+                                canChooseFiles:canChooseFiles
+                              canChooseFolders:canChooseFolders];
+    if (panel && [panel runModal] == NSModalResponseOK) {
+        if ([[panel URLs] count] > 0) {
+            NSString* seperator = [NSString stringWithFormat:@"%c", 28];
+            return [[panel URLs] componentsJoinedByString:seperator];
+        }
+    }
+
+    return @"";
+}
+
+- (void)dialogOpenFilePanelAsync:(NSString*)title
+                       directory:(NSString*)directory
+                         filters:(NSString*)filters
+                     multiselect:(BOOL)multiselect
+                  canChooseFiles:(BOOL)canChooseFiles
+                canChooseFolders:(BOOL)canChooseFolders {
+
+    NSOpenPanel* panel = [self createOpenPanel:title
+                                     directory:directory
+                                       filters:filters
+                                   multiselect:multiselect
+                                canChooseFiles:canChooseFiles
+                              canChooseFolders:canChooseFolders];
+    if (panel) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if ([panel runModal] == NSModalResponseOK) {
+                if ([[panel URLs] count] > 0) {
+                    NSString* seperator = [NSString stringWithFormat:@"%c", 28];
+                    NSString* paths = [[panel URLs] componentsJoinedByString:seperator];
+                    asyncCallback([paths UTF8String]);
+                    return;
+                }
+            }
+            asyncCallback([@"" UTF8String]);
+        });
+    }
+    else {
+        asyncCallback([@"" UTF8String]);
+    }
+}
+
+- (NSOpenPanel*)createOpenPanel:(NSString*)title
+                      directory:(NSString*)directory
+                        filters:(NSString*)filters
+                    multiselect:(BOOL)multiselect
+                 canChooseFiles:(BOOL)canChooseFiles
+               canChooseFolders:(BOOL)canChooseFolders {
     @try {
         NSMutableArray* filterItems = [[NSMutableArray alloc] init];
         NSMutableArray* extensions = [[NSMutableArray alloc] init];
@@ -89,24 +195,62 @@ const char* DialogSaveFilePanel(const char* title, const char* directory, const 
         [panel setAllowsMultipleSelection:multiselect];
         [panel setDirectoryURL:[NSURL fileURLWithPath:directory]];
 
-        if ([panel runModal] == NSFileHandlingPanelOKButton) {
-            if ([[panel URLs] count] > 0) {
-                NSString *seperator = [NSString stringWithFormat:@"%c", 28];
-                return [[panel URLs] componentsJoinedByString:seperator];
-            }
-        }
+        return panel;
     }
     @catch (NSException *exception) {
         NSLog(@"SFB::dialogOpenFilePanel Exception: %@", exception.reason);
+        return nil;
     }
-
-    return @"";
 }
 
 - (NSString*)dialogSaveFilePanel:(NSString*)title
                        directory:(NSString*)directory
                      defaultName:(NSString*)defaultName
                          filters:(NSString*)filters {
+    NSSavePanel* panel = [self createSavePanel:title
+                                     directory:directory
+                                   defaultName:defaultName
+                                       filters:filters];
+    if (panel && [panel runModal] == NSModalResponseOK) {
+        NSURL *URL = [panel URL];
+        if (URL) {
+            return [URL path];
+        }
+    }
+
+    return @"";
+}
+
+- (void)dialogSaveFilePanelAsync:(NSString*)title
+                       directory:(NSString*)directory
+                     defaultName:(NSString*)defaultName
+                         filters:(NSString*)filters {
+    NSSavePanel* panel = [self createSavePanel:title
+                                     directory:directory
+                                   defaultName:defaultName
+                                       filters:filters];
+    if (panel) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if ([panel runModal] == NSModalResponseOK) {
+                NSURL *URL = [panel URL];
+                if (URL) {
+                    asyncCallback([[URL path] UTF8String]);
+                    return;
+                }
+            }
+            asyncCallback([@"" UTF8String]);
+        });
+    }
+    else {
+        asyncCallback([@"" UTF8String]);
+    }
+}
+
+
+- (NSSavePanel*)createSavePanel:(NSString*)title
+                      directory:(NSString*)directory
+                    defaultName:(NSString*)defaultName
+                        filters:(NSString*)filters {
     @try {
         NSMutableArray* filterItems = [[NSMutableArray alloc] init];
         NSMutableArray* extensions = [[NSMutableArray alloc] init];
@@ -144,19 +288,14 @@ const char* DialogSaveFilePanel(const char* title, const char* directory, const 
         [panel setDirectoryURL:[NSURL fileURLWithPath:directory]];
         [panel setNameFieldStringValue:defaultName];
 
-        if ([panel runModal] == NSFileHandlingPanelOKButton) {
-            NSURL *URL = [panel URL];
-            if (URL) {
-                return [URL path];
-            }
-        }
+        return panel;
     }
     @catch (NSException *exception) {
         NSLog(@"SFB::dialogSaveFilePanel Exception%@", exception.reason);
+        return nil;;
     }
-
-    return @"";
 }
+
 
 - (void)parseFilter:(NSString*)filter filters:(NSMutableArray*)filters extensions:(NSMutableArray*)extensions {
     if ([filter length] == 0) {
@@ -194,8 +333,9 @@ const char* DialogSaveFilePanel(const char* title, const char* directory, const 
 
 - (id)initWithPanel:(NSPanel*)panel {
     self = [super init];
-    if (self)
+    if (self) {
         _panel = panel;
+    }
     return self;
 }
 
