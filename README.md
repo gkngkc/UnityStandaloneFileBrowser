@@ -55,7 +55,7 @@ Notes:
     ![Alt text](/Images/win_import_1.jpg?raw=true "Plugin Import Ookii") ![Alt text](/Images/win_import_2.jpg?raw=true "Plugin Import System.Forms")
     
 - Mac
-    * Sync calls are throws an exception at development build after native panel loses and gains focus. Use async calls to avodd this.
+    * Sync calls are throws an exception at development build after native panel loses and gains focus. Use async calls to avoid this.
 
 WebGL:
  - Basic upload/download file support.
