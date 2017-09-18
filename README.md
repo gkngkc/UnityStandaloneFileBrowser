@@ -6,7 +6,6 @@ A simple wrapper for native file dialogs on Windows/Mac.
 - Open file/folder, save file dialogs supported.
 - Multiple file selection.
 - File extension filter.
-- Windows version requires .NET 2.0 api compatibility level 
 - Linux is not supported.
 - Basic WebGL support.
 
@@ -15,6 +14,9 @@ Example usage:
 ```csharp
 // Open file
 var paths = StandaloneFileBrowser.OpenFilePanel("Open File", "", "", false);
+
+// Open file async
+StandaloneFileBrowser.OpenFilePanelAsync("Open File", "", "", false, (string[] paths) => {  });
 
 // Open file with filter
 var extensions = new [] {
@@ -27,6 +29,9 @@ var paths = StandaloneFileBrowser.OpenFilePanel("Open File", "", extensions, tru
 // Save file
 var path = StandaloneFileBrowser.SaveFilePanel("Save File", "", "", "");
 
+// Save file async
+StandaloneFileBrowser.SaveFilePanelAsync("Save File", "", "", "", (string path) => {  });
+
 // Save file with filter
 var extensionList = new [] {
     new ExtensionFilter("Binary", "bin"),
@@ -34,13 +39,23 @@ var extensionList = new [] {
 };
 var path = StandaloneFileBrowser.SaveFilePanel("Save File", "", "MySaveFile", extensionList);
 ```
-Look for Sample/BasicSampleScene.unity for more detailed examples.
+Look Sample/BasicSampleScene.unity for more detailed examples.
 
 Mac Screenshot
 ![Alt text](/Images/sfb_mac.jpg?raw=true "Mac")
 
 Windows Screenshot
 ![Alt text](/Images/sfb_win.jpg?raw=true "Win")
+
+Notes:
+- Windows
+    * Requires .NET 2.0 api compatibility level 
+    * Plugin import settings should be like this;
+    
+    ![Alt text](/Images/win_import_1.jpg?raw=true "Plugin Import Ookii") ![Alt text](/Images/win_import_2.jpg?raw=true "Plugin Import System.Forms")
+    
+- Mac
+    * Sync calls are throws an exception at development build after native panel loses and gains focus. Use async calls to aviod this.
 
 WebGL:
  - Basic upload/download file support.
