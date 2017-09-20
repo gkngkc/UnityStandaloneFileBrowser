@@ -7,9 +7,9 @@ const char* DialogOpenFilePanel(const char* title,
                                 const char* filters,
                                 bool multiselect) {
     StandaloneFileBrowser* dialog = [[StandaloneFileBrowser alloc] init];
-    NSString* paths = [dialog dialogOpenFilePanel:[NSString stringWithUTF8String:title]
-                                        directory:[NSString stringWithUTF8String:directory]
-                                          filters:[NSString stringWithUTF8String:filters]
+    NSString* paths = [dialog dialogOpenFilePanel:[NSString stringWithUTF8String:title ?: ""]
+                                        directory:[NSString stringWithUTF8String:directory ?: ""]
+                                          filters:[NSString stringWithUTF8String:filters ?: ""]
                                       multiselect:multiselect
                                    canChooseFiles:YES
                                  canChooseFolders:NO];
@@ -23,9 +23,9 @@ void DialogOpenFilePanelAsync(const char* title,
                               callbackFunc cb) {
     asyncCallback = cb;
     StandaloneFileBrowser* dialog = [[StandaloneFileBrowser alloc] init];
-    [dialog dialogOpenFilePanelAsync:[NSString stringWithUTF8String:title]
-                           directory:[NSString stringWithUTF8String:directory]
-                             filters:[NSString stringWithUTF8String:filters]
+    [dialog dialogOpenFilePanelAsync:[NSString stringWithUTF8String:title ?: ""]
+                           directory:[NSString stringWithUTF8String:directory ?: ""]
+                             filters:[NSString stringWithUTF8String:filters ?: ""]
                          multiselect:multiselect
                       canChooseFiles:YES
                     canChooseFolders:NO];
@@ -35,8 +35,8 @@ const char* DialogOpenFolderPanel(const char* title,
                                   const char* directory,
                                   bool multiselect) {
     StandaloneFileBrowser* dialog = [[StandaloneFileBrowser alloc] init];
-    NSString* paths = [dialog dialogOpenFilePanel:[NSString stringWithUTF8String:title]
-                                        directory:[NSString stringWithUTF8String:directory]
+    NSString* paths = [dialog dialogOpenFilePanel:[NSString stringWithUTF8String:title ?: ""]
+                                        directory:[NSString stringWithUTF8String:directory ?: ""]
                                           filters:[NSString stringWithUTF8String:""]
                                       multiselect:multiselect
                                    canChooseFiles:NO
@@ -50,8 +50,8 @@ void DialogOpenFolderPanelAsync(const char* title,
                                 callbackFunc cb) {
     asyncCallback = cb;
     StandaloneFileBrowser* dialog = [[StandaloneFileBrowser alloc] init];
-    [dialog dialogOpenFilePanelAsync:[NSString stringWithUTF8String:title]
-                           directory:[NSString stringWithUTF8String:directory]
+    [dialog dialogOpenFilePanelAsync:[NSString stringWithUTF8String:title ?: ""]
+                           directory:[NSString stringWithUTF8String:directory ?: ""]
                              filters:[NSString stringWithUTF8String:""]
                          multiselect:multiselect
                       canChooseFiles:NO
@@ -63,10 +63,10 @@ const char* DialogSaveFilePanel(const char* title,
                                 const char* defaultName,
                                 const char* filters) {
     StandaloneFileBrowser* dialog = [[StandaloneFileBrowser alloc] init];
-    NSString* paths = [dialog dialogSaveFilePanel:[NSString stringWithUTF8String:title]
-                                        directory:[NSString stringWithUTF8String:directory]
-                                      defaultName:[NSString stringWithUTF8String:defaultName]
-                                          filters:[NSString stringWithUTF8String:filters]];
+    NSString* paths = [dialog dialogSaveFilePanel:[NSString stringWithUTF8String:title ?: ""]
+                                        directory:[NSString stringWithUTF8String:directory ?: ""]
+                                      defaultName:[NSString stringWithUTF8String:defaultName ?: ""]
+                                          filters:[NSString stringWithUTF8String:filters ?: ""]];
     return [paths UTF8String];
 }
 
@@ -77,10 +77,10 @@ void DialogSaveFilePanelAsync(const char* title,
                               callbackFunc cb) {
     asyncCallback = cb;
     StandaloneFileBrowser* dialog = [[StandaloneFileBrowser alloc] init];
-    [dialog dialogSaveFilePanelAsync:[NSString stringWithUTF8String:title]
-                           directory:[NSString stringWithUTF8String:directory]
-                         defaultName:[NSString stringWithUTF8String:defaultName]
-                             filters:[NSString stringWithUTF8String:filters]];
+    [dialog dialogSaveFilePanelAsync:[NSString stringWithUTF8String:title ?: ""]
+                           directory:[NSString stringWithUTF8String:directory ?: ""]
+                         defaultName:[NSString stringWithUTF8String:defaultName ?: ""]
+                             filters:[NSString stringWithUTF8String:filters ?: ""]];
 }
 
 
