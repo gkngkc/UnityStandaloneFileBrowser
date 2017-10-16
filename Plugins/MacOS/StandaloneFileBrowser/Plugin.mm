@@ -129,22 +129,16 @@ void DialogSaveFilePanelAsync(const char* title,
                                    multiselect:multiselect
                                 canChooseFiles:canChooseFiles
                               canChooseFolders:canChooseFolders];
-    if (panel) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if ([panel runModal] == NSModalResponseOK) {
-                if ([[panel URLs] count] > 0) {
-                    NSString* seperator = [NSString stringWithFormat:@"%c", 28];
-                    NSString* paths = [[panel URLs] componentsJoinedByString:seperator];
-                    asyncCallback([paths UTF8String]);
-                    return;
-                }
-            }
-            asyncCallback([@"" UTF8String]);
-        });
+    [self performSelectorOnMainThread:@selector(dialogOpenFilePanelAsyncSelector:) withObject:panel waitUntilDone:NO];
+}
+
+- (void)dialogOpenFilePanelAsyncSelector:(NSOpenPanel*)panel {
+    NSString* paths = @"";
+    if (panel && [panel runModal] == NSModalResponseOK && [[panel URLs] count] > 0) {
+        NSString* seperator = [NSString stringWithFormat:@"%c", 28];
+        paths = [[panel URLs] componentsJoinedByString:seperator];
     }
-    else {
-        asyncCallback([@"" UTF8String]);
-    }
+    asyncCallback([paths UTF8String]);
 }
 
 - (NSOpenPanel*)createOpenPanel:(NSString*)title
@@ -229,23 +223,19 @@ void DialogSaveFilePanelAsync(const char* title,
                                      directory:directory
                                    defaultName:defaultName
                                        filters:filters];
-    if (panel) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if ([panel runModal] == NSModalResponseOK) {
-                NSURL *URL = [panel URL];
-                if (URL) {
-                    asyncCallback([[URL path] UTF8String]);
-                    return;
-                }
-            }
-            asyncCallback([@"" UTF8String]);
-        });
-    }
-    else {
-        asyncCallback([@"" UTF8String]);
-    }
+    [self performSelectorOnMainThread:@selector(dialogSaveFilePanelAsyncSelector:) withObject:panel waitUntilDone:NO];
 }
 
+- (void)dialogSaveFilePanelAsyncSelector:(NSSavePanel*)panel {
+    NSString* path = @"";
+    if (panel && [panel runModal] == NSModalResponseOK) {
+        NSURL *URL = [panel URL];
+        if (URL) {
+            path = [URL path];
+        }
+    }
+    asyncCallback([path UTF8String]);
+}
 
 - (NSSavePanel*)createSavePanel:(NSString*)title
                       directory:(NSString*)directory
