@@ -9,6 +9,8 @@ A simple wrapper for native file dialogs on Windows/Mac.
 - Linux is not supported.
 - Basic WebGL support.
 
+[Download Package](https://github.com/gkngkc/UnityStandaloneFileBrowser/releases/download/1.0/StandaloneFileBrowser.unitypackage)
+
 Example usage:
 
 ```csharp
@@ -39,7 +41,7 @@ var extensionList = new [] {
 };
 var path = StandaloneFileBrowser.SaveFilePanel("Save File", "", "MySaveFile", extensionList);
 ```
-Look Sample/BasicSampleScene.unity for more detailed examples.
+See Sample/BasicSampleScene.unity for more detailed examples.
 
 Mac Screenshot
 ![Alt text](/Images/sfb_mac.jpg?raw=true "Mac")
@@ -50,6 +52,7 @@ Windows Screenshot
 Notes:
 - Windows
     * Requires .NET 2.0 api compatibility level 
+    * Async dialog opening not implemented, ..Async methods simply calls regular sync methods.
     * Plugin import settings should be like this;
     
     ![Alt text](/Images/win_import_1.jpg?raw=true "Plugin Import Ookii") ![Alt text](/Images/win_import_2.jpg?raw=true "Plugin Import System.Forms")
