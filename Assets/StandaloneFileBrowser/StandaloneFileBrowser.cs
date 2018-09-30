@@ -19,6 +19,8 @@ namespace SFB {
             _platformWrapper = new StandaloneFileBrowserMac();
 #elif UNITY_STANDALONE_WIN
             _platformWrapper = new StandaloneFileBrowserWindows();
+#elif UNITY_STANDALONE_LINUX
+            _platformWrapper = new StandaloneFileBrowserLinux();
 #elif UNITY_EDITOR
             _platformWrapper = new StandaloneFileBrowserEditor();
 #endif
