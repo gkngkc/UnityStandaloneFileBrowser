@@ -17,6 +17,8 @@ namespace SFB {
         public delegate void AsyncCallback(string path);
 
         [DllImport("StandaloneFileBrowser")]
+        private static extern void DialogInit();
+        [DllImport("StandaloneFileBrowser")]
         private static extern IntPtr DialogOpenFilePanel(string title, string directory, string extension, bool multiselect);
         [DllImport("StandaloneFileBrowser")]
         private static extern void DialogOpenFilePanelAsync(string title, string directory, string extension, bool multiselect, AsyncCallback callback);
@@ -28,6 +30,11 @@ namespace SFB {
         private static extern IntPtr DialogSaveFilePanel(string title, string directory, string defaultName, string extension);
         [DllImport("StandaloneFileBrowser")]
         private static extern void DialogSaveFilePanelAsync(string title, string directory, string defaultName, string extension, AsyncCallback callback);
+
+        public StandaloneFileBrowserLinux()
+        {
+            DialogInit();
+        }
 
         public string[] OpenFilePanel(string title, string directory, ExtensionFilter[] extensions, bool multiselect) {
             var paths = Marshal.PtrToStringAnsi(DialogOpenFilePanel(

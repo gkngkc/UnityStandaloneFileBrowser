@@ -27,6 +27,10 @@ char* strcat_realloc(char* str1, const char* str2) {
 
 static callbackFunc asyncCallback;
 
+void DialogInit() {
+    gtk_init(0, NULL);
+}
+
 const char*
 GTKOpenPanel(const char* title, const char* directory, const char* extension, bool multiselect,
              GtkFileChooserAction action);
@@ -125,8 +129,10 @@ GTKOpenPanel(const char* title, const char* directory, const char* extensions, b
         filename[0] = '\0';
     }
 
-
     gtk_widget_destroy(dialog);
+
+    while (gtk_events_pending ())
+        gtk_main_iteration ();
     return filename;
 }
 
@@ -134,13 +140,6 @@ void GTKSetFilters(const char* extensions, GtkWidget* dialog) {
     if (extensions == NULL || strlen(extensions) == 0) {
         return;
     }
-//        GtkFileFilter* filter = gtk_file_filter_new();
-//        char* ext;// = "*.";
-//        ext = malloc(3 * sizeof(char));
-//        ext = strcpy(ext, "*.");
-//        ext = strcat_realloc(ext, extension);
-//        gtk_file_filter_add_pattern(filter, ext);
-//        gtk_file_chooser_set_filter((GtkFileChooser*) dialog, filter);
 
     //    Image Files;png,jpg,jpeg|Sound Files;mp3,wav|All Files;*
     char* extensions_tok = malloc(sizeof(char) * (1+ strlen(extensions)));

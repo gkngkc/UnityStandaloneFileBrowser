@@ -4,7 +4,7 @@
 #include "library.h"
 
 int main(int argc, char *argv[]) {
-    gtk_init(&argc, &argv);
+    DialogInit();
     const char* folders = DialogOpenFolderPanel("Unity Open Folder", "/", true);
     printf("Folders selected: %s\n", folders);
     const char* files = DialogOpenFilePanel("Unity Open File", "", "", true);
