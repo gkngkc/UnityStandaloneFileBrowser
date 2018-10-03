@@ -1,15 +1,15 @@
 # Unity Standalone File Browser
 
-A simple wrapper for native file dialogs on Windows/Mac.
+A simple wrapper for native file dialogs on Windows/Mac/Linux.
 
 - Works in editor and runtime.
 - Open file/folder, save file dialogs supported.
 - Multiple file selection.
 - File extension filter.
-- Linux is not supported.
+- Linux support by [Ricardo Rodrigues](https://github.com/RicardoEPRodrigues).
 - Basic WebGL support.
 
-[Download Package](https://github.com/gkngkc/UnityStandaloneFileBrowser/releases/download/1.0/StandaloneFileBrowser.unitypackage)
+[Download Package](https://github.com/gkngkc/UnityStandaloneFileBrowser/releases/download/1.1/StandaloneFileBrowser.unitypackage)
 
 Example usage:
 
