@@ -8,3 +8,4 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/StandaloneFileBrowser/Sample/BasicSampleScene.unity
     guid: d97280fe82b874466870f709c3315d41
+  m_configObjects: {}
