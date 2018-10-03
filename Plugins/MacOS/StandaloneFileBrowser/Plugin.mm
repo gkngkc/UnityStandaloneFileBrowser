@@ -196,6 +196,9 @@ void DialogSaveFilePanelAsync(const char* title,
         [panel setCanChooseDirectories:canChooseFolders];
         [panel setAllowsMultipleSelection:multiselect];
         [panel setDirectoryURL:[NSURL fileURLWithPath:directory]];
+        if ([panel respondsToSelector:@selector(setCanCreateDirectories:)]) {
+            [panel setCanCreateDirectories:YES];
+        }
 
         return panel;
     }
