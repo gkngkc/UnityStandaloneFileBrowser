@@ -35,6 +35,9 @@ const char*
 GTKOpenPanel(const char* title, const char* directory, const char* extension, bool multiselect,
              GtkFileChooserAction action);
 
+const char*
+GTKSavePanel(const char* title, const char* directory, const char* defaultName, const char* filters);
+
 void GTKSetFilters(const char* extension, GtkWidget* dialog);
 
 const char* DialogOpenFilePanel(const char* title, const char* directory, const char* extension,
@@ -50,7 +53,7 @@ const char* DialogOpenFolderPanel(const char* title, const char* directory, bool
 
 const char* DialogSaveFilePanel(const char* title, const char* directory, const char* defaultName,
                                 const char* filters) {
-    return "NOT IMPLEMENTED";
+    return GTKSavePanel(title, directory, defaultName, filters);
 }
 
 void DialogOpenFilePanelAsync(const char* title, const char* directory, const char* extension,
@@ -72,7 +75,7 @@ void DialogOpenFolderPanelAsync(const char* title, const char* directory, bool m
 void DialogSaveFilePanelAsync(const char* title, const char* directory, const char* defaultName,
                               const char* filters, callbackFunc cb) {
     // TODO Add async capability
-    cb("NOT IMPLEMENTED");
+    cb(GTKSavePanel(title, directory, defaultName, filters));
 }
 
 const char*
@@ -131,6 +134,49 @@ GTKOpenPanel(const char* title, const char* directory, const char* extensions, b
 
     gtk_widget_destroy(dialog);
 
+    while (gtk_events_pending ())
+        gtk_main_iteration ();
+    return filename;
+}
+
+const char*
+GTKSavePanel(const char* title, const char* directory, const char* defaultName, const char* filters) {
+    char* filename = NULL;
+    GtkWidget *dialog;
+    GtkFileChooser *chooser;
+    gint res;
+
+    dialog = gtk_file_chooser_dialog_new ("Save File",
+                                        NULL,
+                                        GTK_FILE_CHOOSER_ACTION_SAVE,
+                                        ("_Cancel"),
+                                        GTK_RESPONSE_CANCEL,
+                                        ("_Save"),
+                                        GTK_RESPONSE_ACCEPT,
+                                        NULL);
+    chooser = GTK_FILE_CHOOSER (dialog);
+
+    gtk_file_chooser_set_do_overwrite_confirmation (chooser, TRUE);
+    gtk_file_chooser_set_current_name(chooser, defaultName);
+    gtk_file_chooser_set_current_folder(chooser, directory);
+
+    GTKSetFilters(filters, dialog);
+
+    res = gtk_dialog_run (GTK_DIALOG (dialog));
+    if (res == GTK_RESPONSE_ACCEPT)
+    {
+        char* name = gtk_file_chooser_get_filename(chooser);
+        filename = malloc(strlen(name) * sizeof(char));
+        strcpy(filename, name);
+        g_free(name);
+    }
+    else if (res == GTK_RESPONSE_CANCEL) {
+        filename = malloc(sizeof(char));
+        filename[0] = '\0';
+    }
+
+    gtk_widget_destroy (dialog);
+    
     while (gtk_events_pending ())
         gtk_main_iteration ();
     return filename;
