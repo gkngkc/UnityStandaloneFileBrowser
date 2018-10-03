@@ -106,11 +106,14 @@ void DialogSaveFilePanelAsync(const char* title,
                                    multiselect:multiselect
                                 canChooseFiles:canChooseFiles
                               canChooseFolders:canChooseFolders];
-    if (panel && [panel runModal] == NSModalResponseOK) {
-        if ([[panel URLs] count] > 0) {
-            NSString* seperator = [NSString stringWithFormat:@"%c", 28];
-            return [[panel URLs] componentsJoinedByString:seperator];
+    if (panel && [panel runModal] == NSModalResponseOK && [[panel URLs] count] > 0) {
+        NSMutableArray* paths = [NSMutableArray arrayWithCapacity:[[panel URLs] count]];
+        for (int i = 0; i < [[panel URLs] count]; i++) {
+            NSURL* url = [[panel URLs] objectAtIndex:i];
+            [paths addObject:[url path]];
         }
+        NSString* seperator = [NSString stringWithFormat:@"%c", 28];
+        return [paths componentsJoinedByString:seperator];
     }
 
     return @"";
@@ -133,12 +136,17 @@ void DialogSaveFilePanelAsync(const char* title,
 }
 
 - (void)dialogOpenFilePanelAsyncSelector:(NSOpenPanel*)panel {
-    NSString* paths = @"";
+    NSString* pathsStr = @"";
     if (panel && [panel runModal] == NSModalResponseOK && [[panel URLs] count] > 0) {
+        NSMutableArray* paths = [NSMutableArray arrayWithCapacity:[[panel URLs] count]];
+        for (int i = 0; i < [[panel URLs] count]; i++) {
+            NSURL* url = [[panel URLs] objectAtIndex:i];
+            [paths addObject:[url path]];
+        }
         NSString* seperator = [NSString stringWithFormat:@"%c", 28];
-        paths = [[panel URLs] componentsJoinedByString:seperator];
+        pathsStr = [paths componentsJoinedByString:seperator];
     }
-    asyncCallback([paths UTF8String]);
+    asyncCallback([pathsStr UTF8String]);
 }
 
 - (NSOpenPanel*)createOpenPanel:(NSString*)title
