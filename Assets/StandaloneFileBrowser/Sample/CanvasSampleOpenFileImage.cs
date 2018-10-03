@@ -19,7 +19,7 @@ public class CanvasSampleOpenFileImage : MonoBehaviour, IPointerDownHandler {
     private static extern void UploadFile(string gameObjectName, string methodName, string filter, bool multiple);
 
     public void OnPointerDown(PointerEventData eventData) {
-        UploadFile(gameObject.name, "OnFileUploadcl", ".png, .jpg", false);
+        UploadFile(gameObject.name, "OnFileUpload", ".png, .jpg", false);
     }
 
     // Called from browser

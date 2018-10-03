@@ -1,12 +1,13 @@
 var StandaloneFileBrowserWebGLPlugin = {
     // Open file.
-    // gameObjectNamePtr: GameObject name required for calling back unity side with SendMessage. And it should be unique
-    // filter(disabled): Filter files. Example filters:
+    // gameObjectNamePtr: Unique GameObject name. Required for calling back unity with SendMessage.
+    // methodNamePtr: Callback method name on given GameObject.
+    // filter: Filter files. Example filters:
     //     Match all image files: "image/*"
     //     Match all video files: "video/*"
     //     Match all audio files: "audio/*"
-    //     Custom: ".plist,.xml,.yaml"
-    // multiselect(disabled): Allows multiple file selection
+    //     Custom: ".plist, .xml, .yaml"
+    // multiselect: Allows multiple file selection
     UploadFile: function(gameObjectNamePtr, methodNamePtr, filterPtr, multiselect) {
         gameObjectName = Pointer_stringify(gameObjectNamePtr);
         methodName = Pointer_stringify(methodNamePtr);
@@ -51,13 +52,6 @@ var StandaloneFileBrowserWebGLPlugin = {
             fileInput.click();
             document.onmouseup = null;
         }
-    },
-
-    // Open folder. - NOT IMPLEMENTED
-    UploadFolder: function(gameObjectNamePtr) {
-        gameObjectName = Pointer_stringify(gameObjectNamePtr);
-        methodName = Pointer_stringify(methodNamePtr);
-        SendMessage(gameObjectName, methodName, '');
     },
 
     // Save file
