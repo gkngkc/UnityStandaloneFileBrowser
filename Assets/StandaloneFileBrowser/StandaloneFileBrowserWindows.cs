@@ -126,6 +126,9 @@ namespace SFB {
             if (!directoryPath.EndsWith("\\")) {
                 directoryPath += "\\";
             }
+            if (Path.GetPathRoot(directoryPath) == directoryPath) {
+                return directory;
+            }
             return Path.GetDirectoryName(directoryPath) + Path.DirectorySeparatorChar;
         }
     }
