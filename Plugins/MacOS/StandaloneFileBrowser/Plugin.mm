@@ -355,6 +355,7 @@ void DialogSaveFilePanelAsync(const char* title,
     else {
         [((NSOpenPanel*)_panel) setAllowedFileTypes:[_extensions objectAtIndex:selectedItemIndex]];
     }
+    [((NSSavePanel*)_panel) update];
 }
 
 - (void)selectFormatSave:(id)sender {
@@ -376,6 +377,7 @@ void DialogSaveFilePanelAsync(const char* title,
     }
     
     [((NSSavePanel*)_panel) setNameFieldStringValue:nameFieldStringWithExt];
+    [((NSSavePanel*)_panel) update];
 }
 
 @end
