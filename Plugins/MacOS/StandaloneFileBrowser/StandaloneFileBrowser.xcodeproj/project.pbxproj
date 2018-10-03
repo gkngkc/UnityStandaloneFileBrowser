@@ -16,7 +16,7 @@
 		08EA7FFBFE8413EDC02AAC07 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		32BAE0B30371A71500C91783 /* Plugin.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Plugin.pch; sourceTree = "<group>"; };
 		6A3F7D2310AAFB3D00948A73 /* Plugin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Plugin.mm; sourceTree = "<group>"; };
-		6A3F7F7E10AC146D00948A73 /* StandaloneFileBroser.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StandaloneFileBroser.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		6A3F7F7E10AC146D00948A73 /* StandaloneFileBrowser.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StandaloneFileBrowser.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D01CCD10486CAD60068D4B7 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		DD2760001CA14C26008BCDB8 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = ../../../../../../../../../System/Library/Frameworks/AppKit.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -74,7 +74,7 @@
 		19C28FB4FE9D528D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				6A3F7F7E10AC146D00948A73 /* StandaloneFileBroser.bundle */,
+				6A3F7F7E10AC146D00948A73 /* StandaloneFileBrowser.bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -96,7 +96,7 @@
 			);
 			name = StandaloneFileBrowser;
 			productName = ASimplePlugin;
-			productReference = 6A3F7F7E10AC146D00948A73 /* StandaloneFileBroser.bundle */;
+			productReference = 6A3F7F7E10AC146D00948A73 /* StandaloneFileBrowser.bundle */;
 			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
@@ -186,7 +186,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -203,6 +203,7 @@
 				PREBINDING = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.gkngkc.sfb;
 				PRODUCT_NAME = StandaloneFileBrowser;
+				VALID_ARCHS = x86_64;
 				WRAPPER_EXTENSION = bundle;
 			};
 			name = Debug;
@@ -211,7 +212,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
@@ -227,6 +228,7 @@
 				PREBINDING = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.gkngkc.sfb;
 				PRODUCT_NAME = StandaloneFileBrowser;
+				VALID_ARCHS = x86_64;
 				WRAPPER_EXTENSION = bundle;
 				ZERO_LINK = NO;
 			};
