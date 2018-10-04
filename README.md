@@ -6,6 +6,7 @@ A simple wrapper for native file dialogs on Windows/Mac/Linux.
 - Open file/folder, save file dialogs supported.
 - Multiple file selection.
 - File extension filter.
+- Mono/IL2CPP backends supported.
 - Linux support by [Ricardo Rodrigues](https://github.com/RicardoEPRodrigues).
 - Basic WebGL support.
 
@@ -49,6 +50,9 @@ Mac Screenshot
 Windows Screenshot
 ![Alt text](/Images/sfb_win.jpg?raw=true "Win")
 
+Linux Screenshot
+![Alt text](/Images/sfb_linux.jpg?raw=true "Win")
+
 Notes:
 - Windows
     * Requires .NET 2.0 api compatibility level 
@@ -62,6 +66,7 @@ Notes:
 
 WebGL:
  - Basic upload/download file support.
+ - File filter support.
  - Not well tested, probably not much reliable.
  - Since browsers require more work to do file operations, webgl isn't directly implemented to Open/Save calls. You can check CanvasSampleScene.unity and canvas sample scripts for example usages.
  
