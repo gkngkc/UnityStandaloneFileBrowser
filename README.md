@@ -10,7 +10,7 @@ A simple wrapper for native file dialogs on Windows/Mac/Linux.
 - Linux support by [Ricardo Rodrigues](https://github.com/RicardoEPRodrigues).
 - Basic WebGL support.
 
-[Download Package](https://github.com/gkngkc/UnityStandaloneFileBrowser/releases/download/1.1/StandaloneFileBrowser.unitypackage)
+[Download Package](https://github.com/gkngkc/UnityStandaloneFileBrowser/releases/download/1.2/StandaloneFileBrowser.unitypackage)
 
 Example usage:
 
