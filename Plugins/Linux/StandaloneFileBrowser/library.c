@@ -127,7 +127,7 @@ GTKOpenPanel(const char* title, const char* directory, const char* extensions, b
             strcpy(filename, name);
             g_free(name);
         }
-    } else if (res == GTK_RESPONSE_CANCEL) {
+    } else { // if (res == GTK_RESPONSE_CANCEL) {
         filename = malloc(sizeof(char));
         filename[0] = '\0';
     }
