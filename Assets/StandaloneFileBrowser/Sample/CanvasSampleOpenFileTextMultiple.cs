@@ -5,6 +5,9 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+#if UNITY_2018_3
+using UnityEngine.Networking;
+#endif
 using SFB;
 
 [RequireComponent(typeof(Button))]
@@ -53,9 +56,15 @@ public class CanvasSampleOpenFileTextMultiple : MonoBehaviour, IPointerDownHandl
     private IEnumerator OutputRoutine(string[] urlArr) {
         var outputText = "";
         for (int i = 0; i < urlArr.Length; i++) {
+#if UNITY_2018_3
+            var loader = UnityWebRequest.Get(urlArr[i]);
+            yield return loader.SendWebRequest();
+            outputText += loader.downloadHandler.text;
+#else
             var loader = new WWW(urlArr[i]);
             yield return loader;
             outputText += loader.text;
+#endif
         }
         output.text = outputText;
     }
