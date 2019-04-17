@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-#if UNITY_2018_3
+#if UNITY_2018_3_OR_NEWER
 using UnityEngine.Networking;
 #endif
 using SFB;
@@ -56,7 +56,7 @@ public class CanvasSampleOpenFileTextMultiple : MonoBehaviour, IPointerDownHandl
     private IEnumerator OutputRoutine(string[] urlArr) {
         var outputText = "";
         for (int i = 0; i < urlArr.Length; i++) {
-#if UNITY_2018_3
+#if UNITY_2018_3_OR_NEWER
             var loader = UnityWebRequest.Get(urlArr[i]);
             yield return loader.SendWebRequest();
             outputText += loader.downloadHandler.text;
