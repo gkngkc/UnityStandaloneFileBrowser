@@ -24,16 +24,14 @@ namespace SFB {
         public string[] OpenFilePanel(string title, string directory, ExtensionFilter[] extensions, bool multiselect) {
             var fd = new VistaOpenFileDialog();
             fd.Title = title;
+            fd.InitialDirectory = directory;
+            fd.Multiselect = multiselect;
             if (extensions != null) {
                 fd.Filter = GetFilterFromFileExtensionList(extensions);
                 fd.FilterIndex = 1;
             }
             else {
                 fd.Filter = string.Empty;
-            }
-            fd.Multiselect = multiselect;
-            if (!string.IsNullOrEmpty(directory)) {
-                fd.FileName = GetDirectoryPath(directory);
             }
             var res = fd.ShowDialog(new WindowWrapper(GetActiveWindow()));
             var filenames = res == DialogResult.OK ? fd.FileNames : new string[0];
@@ -48,11 +46,10 @@ namespace SFB {
         public string[] OpenFolderPanel(string title, string directory, bool multiselect) {
             var fd = new VistaFolderBrowserDialog();
             fd.Description = title;
-            if (!string.IsNullOrEmpty(directory)) {
-                fd.SelectedPath = GetDirectoryPath(directory);
-            }
+            fd.RootFolder = Environment.SpecialFolder.MyComputer;
+            fd.SelectedPath = directory;
             var res = fd.ShowDialog(new WindowWrapper(GetActiveWindow()));
-            var filenames = res == DialogResult.OK ? new []{ fd.SelectedPath } : new string[0];
+            var filenames = res == DialogResult.OK ? new[] { fd.SelectedPath } : new string[0];
             fd.Dispose();
             return filenames;
         }
@@ -64,18 +61,8 @@ namespace SFB {
         public string SaveFilePanel(string title, string directory, string defaultName, ExtensionFilter[] extensions) {
             var fd = new VistaSaveFileDialog();
             fd.Title = title;
-
-            var finalFilename = "";
-
-            if (!string.IsNullOrEmpty(directory)) {
-                finalFilename = GetDirectoryPath(directory);
-            }
-
-            if (!string.IsNullOrEmpty(defaultName)) {
-                finalFilename += defaultName;
-            }
-
-            fd.FileName = finalFilename;
+            fd.InitialDirectory = directory;
+            fd.FileName = defaultName;
             if (extensions != null) {
                 fd.Filter = GetFilterFromFileExtensionList(extensions);
                 fd.FilterIndex = 1;
@@ -100,6 +87,7 @@ namespace SFB {
         // .NET Framework FileDialog Filter format
         // https://msdn.microsoft.com/en-us/library/microsoft.win32.filedialog.filter
         private static string GetFilterFromFileExtensionList(ExtensionFilter[] extensions) {
+            if (extensions == null) return "";
             var filterString = "";
             foreach (var filter in extensions) {
                 filterString += filter.Name + "(";
@@ -119,17 +107,6 @@ namespace SFB {
             }
             filterString = filterString.Remove(filterString.Length - 1);
             return filterString;
-        }
-
-        private static string GetDirectoryPath(string directory) {
-            var directoryPath = Path.GetFullPath(directory);
-            if (!directoryPath.EndsWith("\\")) {
-                directoryPath += "\\";
-            }
-            if (Path.GetPathRoot(directoryPath) == directoryPath) {
-                return directory;
-            }
-            return Path.GetDirectoryName(directoryPath) + Path.DirectorySeparatorChar;
         }
     }
 }
