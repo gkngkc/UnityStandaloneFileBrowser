@@ -55,7 +55,7 @@ Linux Screenshot
 
 Notes:
 - Windows
-    * Requires .NET 2.0 api compatibility level 
+    * Requires .NET 3.5 or higher api compatibility level 
     * Async dialog opening not implemented, ..Async methods simply calls regular sync methods.
     * Plugin import settings should be like this;
     
