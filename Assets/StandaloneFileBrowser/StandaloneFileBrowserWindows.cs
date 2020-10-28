@@ -102,7 +102,7 @@ namespace SFB {
         private static string GetFilterFromFileExtensionList(ExtensionFilter[] extensions) {
             var filterString = "";
             foreach (var filter in extensions) {
-                filterString += filter.Name + "(";
+                filterString += filter.Name + " (";
 
                 foreach (var ext in filter.Extensions) {
                     filterString += "*." + ext + ",";
