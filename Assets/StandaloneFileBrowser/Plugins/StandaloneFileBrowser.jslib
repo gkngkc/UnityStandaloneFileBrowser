@@ -48,10 +48,7 @@ var StandaloneFileBrowserWebGLPlugin = {
         }
         document.body.appendChild(fileInput);
 
-        document.onmouseup = function() {
-            fileInput.click();
-            document.onmouseup = null;
-        }
+        fileInput.click();
     },
 
     // Save file
