@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.Networking;
 
 
 namespace SFB.Samples
@@ -44,7 +45,7 @@ namespace SFB.Samples
         private void OnClick()
         {
             var paths = StandaloneFileBrowser.OpenFilePanel("Title", "", "txt", false);
-            if (paths.Length > 0)
+            if (paths.Length > 0 && !string.IsNullOrEmpty(paths[0]))
             {
                 StartCoroutine(OutputRoutine(new System.Uri(paths[0]).AbsoluteUri));
             }
@@ -53,9 +54,14 @@ namespace SFB.Samples
 
         private IEnumerator OutputRoutine(string url)
         {
-            var loader = new WWW(url);
-            yield return loader;
-            output.text = loader.text;
+            using (var request = UnityWebRequest.Get(url))
+            {
+                yield return request.SendWebRequest();
+                if (request.result == UnityWebRequest.Result.Success)
+                {
+                    output.text = request.downloadHandler.text;
+                }
+            }
         }
     }
 }

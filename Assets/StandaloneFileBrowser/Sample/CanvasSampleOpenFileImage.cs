@@ -1,10 +1,12 @@
 using System.Text;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.Networking;
 
 namespace SFB.Samples
 {
@@ -42,8 +44,8 @@ namespace SFB.Samples
 
         private void OnClick()
         {
-            var paths = StandaloneFileBrowser.OpenFilePanel("Title", "", ".png", false);
-            if (paths.Length > 0)
+            var paths = StandaloneFileBrowser.OpenFilePanel("Title", "", "png,jpg,jpeg", false);
+            if (paths.Length > 0 && !string.IsNullOrEmpty(paths[0]))
             {
                 StartCoroutine(OutputRoutine(new System.Uri(paths[0]).AbsoluteUri));
             }
@@ -52,9 +54,16 @@ namespace SFB.Samples
 
         private IEnumerator OutputRoutine(string url)
         {
-            var loader = new WWW(url);
-            yield return loader;
-            output.texture = loader.texture;
+            using (var uwr = UnityWebRequest.Get(url))
+            {
+                var downloadHandlerTexture = new DownloadHandlerTexture();
+                uwr.downloadHandler = downloadHandlerTexture;
+                yield return uwr.SendWebRequest();
+                if (uwr.result == UnityWebRequest.Result.Success)
+                {
+                    output.texture = downloadHandlerTexture.texture;
+                }
+            }
         }
     }
 }

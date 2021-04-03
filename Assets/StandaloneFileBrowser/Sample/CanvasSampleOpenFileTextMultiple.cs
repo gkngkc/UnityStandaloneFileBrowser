@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.Networking;
 
 namespace SFB.Samples
 {
@@ -44,7 +45,7 @@ namespace SFB.Samples
         {
             // var paths = StandaloneFileBrowser.OpenFilePanel("Title", "", "txt", true);
             var paths = StandaloneFileBrowser.OpenFilePanel("Open File", "", "", true);
-            if (paths.Length > 0)
+            if (paths.Length > 0 && !string.IsNullOrEmpty(paths[0]))
             {
                 var urlArr = new List<string>(paths.Length);
                 for (int i = 0; i < paths.Length; i++)
@@ -59,11 +60,16 @@ namespace SFB.Samples
         private IEnumerator OutputRoutine(string[] urlArr)
         {
             var outputText = "";
-            for (int i = 0; i < urlArr.Length; i++)
+            foreach (var url in urlArr)
             {
-                var loader = new WWW(urlArr[i]);
-                yield return loader;
-                outputText += loader.text;
+                using (var request = UnityWebRequest.Get(url))
+                {
+                    yield return request.SendWebRequest();
+                    if (request.result == UnityWebRequest.Result.Success)
+                    {
+                        outputText += request.downloadHandler.text;
+                    }
+                }
             }
             output.text = outputText;
         }
