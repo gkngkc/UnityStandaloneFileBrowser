@@ -4,6 +4,7 @@
 #include <malloc.h>
 #include <stdbool.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <assert.h>
 #include <sys/mman.h>
 #include <sys/wait.h>
@@ -27,8 +28,12 @@ void DialogInit() {
     asprintf(&dialogExecutablePath, "/proc/self/fd/%d", fd);
 }
 
-void readn(int fd, void *buffer, size_t n) {
+void readn(pid_t pid, int fd, void *buffer, size_t n) {
     while (n) {
+        int status;
+        if (waitpid(pid, &status, WNOHANG) == pid) {
+            assert(("The child process exited unexpectedly. Please refer to the log in stderr.", false));
+        }
         ssize_t r;
         assert((r = read(fd, buffer, n)) >= 0);
         n -= r;
@@ -46,16 +51,17 @@ const char* runSubprocess(const char **args) {
     assert(pid != -1);
     if (pid == 0) {
         assert(dup2(pipeFd[1], STDOUT_FILENO) != -1);
-        assert((execv(dialogExecutablePath, (char* const*)args), false));
-        return NULL;
+        execv(dialogExecutablePath, (char* const*)args);
+        perror("execv");
+        abort();
     } else {
         assert(close(pipeFd[1]) == 0);
 
         size_t size;
-        readn(pipeFd[0], &size, sizeof(size));
+        readn(pid, pipeFd[0], &size, sizeof(size));
 
         char *result = malloc(size + 1);
-        readn(pipeFd[0], result, size);
+        readn(pid, pipeFd[0], result, size);
         result[size] = '\0';
 
         assert(close(pipeFd[0]) == 0);
