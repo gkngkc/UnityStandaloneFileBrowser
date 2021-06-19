@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.12)
 project(StandaloneFileBrowser C)
 
 set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_FLAGS "-Wall")
+set(CMAKE_C_FLAGS_DEBUG "-g")
+set(CMAKE_C_FLAGS_RELEASE "-O2")
 
 # Use the package PkgConfig to detect GTK+ headers/library files
 FIND_PACKAGE(PkgConfig REQUIRED)
@@ -15,10 +18,6 @@ LINK_DIRECTORIES(${GTK3_LIBRARY_DIRS})
 # Add other flags to the compiler
 ADD_DEFINITIONS(${GTK3_CFLAGS_OTHER})
 
-add_library(${PROJECT_NAME} SHARED library.c library.h)
+add_executable(dialog dialog.c)
 
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${GTK3_LIBRARIES})
-
-add_executable(${PROJECT_NAME}_EXE main.c)
-
-TARGET_LINK_LIBRARIES(${PROJECT_NAME}_EXE ${PROJECT_NAME} ${GTK3_LIBRARIES})
+TARGET_LINK_LIBRARIES(dialog ${GTK3_LIBRARIES})

@@ -1,232 +1,112 @@
+#define _GNU_SOURCE
 #include <stddef.h>
-#include <gtk/gtk.h>
 #include <string.h>
 #include <malloc.h>
+#include <stdbool.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <assert.h>
+#include <sys/mman.h>
+#include <sys/wait.h>
+#include <sys/syscall.h>
+
 #include "library.h"
 
-char* strcat_realloc(char* str1, const char* str2) {
-    char* new_str;
-    size_t length;
-    size_t str1length;
+typedef void (*callbackFunc)(const char *);
 
-    if (str2 == NULL)
-        return str1;
-    str1length = 0;
-    if (str1 != NULL)
-        str1length = strlen(str1);
-    length = strlen(str2) + str1length;
-    new_str = (char*) realloc(str1, (1 + length) * sizeof(char));
-    if (new_str == NULL)
-        return str1;
-    new_str[str1length] = '\0';
+extern char _binary_build_dialog_start[];
+extern char _binary_build_dialog_end[];
 
-    strcat(new_str, str2);
-
-    return new_str;
-}
-
-static callbackFunc asyncCallback;
+char *dialogExecutablePath;
 
 void DialogInit() {
-    gtk_init(0, NULL);
+    // Avoid linking against higher glibc ABI version
+    // int fd = memfd_create("Menci", MFD_CLOEXEC);
+    int fd = syscall(__NR_memfd_create, "Menci", MFD_CLOEXEC);
+    assert(fd != 0);
+    write(fd, _binary_build_dialog_start, _binary_build_dialog_end - _binary_build_dialog_start);
+    asprintf(&dialogExecutablePath, "/proc/self/fd/%d", fd);
 }
 
-const char*
-GTKOpenPanel(const char* title, const char* directory, const char* extension, bool multiselect,
-             GtkFileChooserAction action);
+void readn(pid_t pid, int fd, void *buffer, size_t n) {
+    while (n) {
+        int status;
+        if (waitpid(pid, &status, WNOHANG) == pid) {
+            assert(("The child process exited unexpectedly. Please refer to the log in stderr.", false));
+        }
+        ssize_t r;
+        assert((r = read(fd, buffer, n)) >= 0);
+        n -= r;
+        buffer = (void *)((char *)buffer + r);
+    }
+}
 
-const char*
-GTKSavePanel(const char* title, const char* directory, const char* defaultName, const char* filters);
+const char* runSubprocess(const char **args) {
+    args[0] = "Menci";
 
-void GTKSetFilters(const char* extension, GtkWidget* dialog);
+    int pipeFd[2];
+    assert(pipe(pipeFd) != -1);
+
+    pid_t pid = fork();
+    assert(pid != -1);
+    if (pid == 0) {
+        assert(dup2(pipeFd[1], STDOUT_FILENO) != -1);
+        execv(dialogExecutablePath, (char* const*)args);
+        perror("execv");
+        abort();
+    } else {
+        assert(close(pipeFd[1]) == 0);
+
+        size_t size;
+        readn(pid, pipeFd[0], &size, sizeof(size));
+
+        char *result = malloc(size + 1);
+        readn(pid, pipeFd[0], result, size);
+        result[size] = '\0';
+
+        assert(close(pipeFd[0]) == 0);
+
+        int status;
+        waitpid(pid, &status, 0);
+        assert(WIFEXITED(status) && WEXITSTATUS(status) == 0);
+
+        return result;
+    }
+}
 
 const char* DialogOpenFilePanel(const char* title, const char* directory, const char* extension,
                                 bool multiselect) {
-    return GTKOpenPanel(title, directory, extension, multiselect,
-                        GTK_FILE_CHOOSER_ACTION_OPEN);
+    const char *args[] = {NULL, "DialogOpenFilePanel", title, directory, extension, multiselect ? "1" : "0", NULL};
+    return runSubprocess(args);
 }
 
 const char* DialogOpenFolderPanel(const char* title, const char* directory, bool multiselect) {
-    return GTKOpenPanel(title, directory, "", multiselect,
-                        GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
+    const char *args[] = {NULL, "DialogOpenFolderPanel", title, directory, multiselect ? "1" : "0", NULL};
+    return runSubprocess(args);
 }
 
 const char* DialogSaveFilePanel(const char* title, const char* directory, const char* defaultName,
                                 const char* filters) {
-    return GTKSavePanel(title, directory, defaultName, filters);
+    const char *args[] = {NULL, "DialogSaveFilePanel", title, directory, defaultName, filters, NULL};
+    return runSubprocess(args);
 }
 
 void DialogOpenFilePanelAsync(const char* title, const char* directory, const char* extension,
                               bool multiselect, callbackFunc cb) {
     // TODO Add async capability
-    cb(GTKOpenPanel(title, directory, extension, multiselect,
-                        GTK_FILE_CHOOSER_ACTION_OPEN));
+    cb(DialogOpenFilePanel(title, directory, extension, multiselect));
 
 }
 
 void DialogOpenFolderPanelAsync(const char* title, const char* directory, bool multiselect,
                                 callbackFunc cb) {
     // TODO Add async capability
-    cb(GTKOpenPanel(title, directory, "", multiselect,
-                        GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER));
+    cb(DialogOpenFolderPanel(title, directory, multiselect));
 
 }
 
 void DialogSaveFilePanelAsync(const char* title, const char* directory, const char* defaultName,
                               const char* filters, callbackFunc cb) {
     // TODO Add async capability
-    cb(GTKSavePanel(title, directory, defaultName, filters));
-}
-
-const char*
-GTKOpenPanel(const char* title, const char* directory, const char* extensions, bool multiselect,
-             GtkFileChooserAction action) {
-    char* filename = NULL;
-    GtkWidget* dialog;
-    gint res;
-
-    dialog = gtk_file_chooser_dialog_new(title,
-                                         NULL,
-                                         action,
-                                         ("_Cancel"),
-                                         GTK_RESPONSE_CANCEL,
-                                         ("_Open"),
-                                         GTK_RESPONSE_ACCEPT,
-                                         NULL);
-    gtk_file_chooser_set_select_multiple((GtkFileChooser*) dialog, multiselect);
-    gtk_file_chooser_set_current_folder((GtkFileChooser*) dialog, directory);
-
-    GTKSetFilters(extensions, dialog);
-
-    res = gtk_dialog_run(GTK_DIALOG (dialog));
-    if (res == GTK_RESPONSE_ACCEPT) {
-        GtkFileChooser* chooser = GTK_FILE_CHOOSER (dialog);
-
-        if (multiselect) {
-            GSList* filenamepus = gtk_file_chooser_get_filenames(chooser);
-
-            int nIndex;
-            GSList* node;
-
-            char split = (char) 28;
-            for (nIndex = 0; (node = g_slist_nth(filenamepus, (guint) nIndex)); nIndex++) {
-                if (nIndex == 0) {
-                    filename = malloc((strlen(node->data) + 1) * sizeof(char));
-                    strcpy(filename, node->data);
-                    continue;
-                }
-                filename = strcat_realloc(filename, &split);
-                filename = strcat_realloc(filename, node->data);
-
-                g_free(node->data);
-            }
-            g_slist_free(filenamepus);
-        } else {
-            char* name = gtk_file_chooser_get_filename(chooser);
-            filename = malloc(strlen(name) * sizeof(char));
-            strcpy(filename, name);
-            g_free(name);
-        }
-    } else { // if (res == GTK_RESPONSE_CANCEL) {
-        filename = malloc(sizeof(char));
-        filename[0] = '\0';
-    }
-
-    gtk_widget_destroy(dialog);
-
-    while (gtk_events_pending ())
-        gtk_main_iteration ();
-    return filename;
-}
-
-const char*
-GTKSavePanel(const char* title, const char* directory, const char* defaultName, const char* filters) {
-    char* filename = NULL;
-    GtkWidget *dialog;
-    GtkFileChooser *chooser;
-    gint res;
-
-    dialog = gtk_file_chooser_dialog_new ("Save File",
-                                        NULL,
-                                        GTK_FILE_CHOOSER_ACTION_SAVE,
-                                        ("_Cancel"),
-                                        GTK_RESPONSE_CANCEL,
-                                        ("_Save"),
-                                        GTK_RESPONSE_ACCEPT,
-                                        NULL);
-    chooser = GTK_FILE_CHOOSER (dialog);
-
-    gtk_file_chooser_set_do_overwrite_confirmation (chooser, TRUE);
-    gtk_file_chooser_set_current_name(chooser, defaultName);
-    gtk_file_chooser_set_current_folder(chooser, directory);
-
-    GTKSetFilters(filters, dialog);
-
-    res = gtk_dialog_run (GTK_DIALOG (dialog));
-    if (res == GTK_RESPONSE_ACCEPT)
-    {
-        char* name = gtk_file_chooser_get_filename(chooser);
-        filename = malloc(strlen(name) * sizeof(char));
-        strcpy(filename, name);
-        g_free(name);
-    }
-    else if (res == GTK_RESPONSE_CANCEL) {
-        filename = malloc(sizeof(char));
-        filename[0] = '\0';
-    }
-
-    gtk_widget_destroy (dialog);
-    
-    while (gtk_events_pending ())
-        gtk_main_iteration ();
-    return filename;
-}
-
-void GTKSetFilters(const char* extensions, GtkWidget* dialog) {
-    if (extensions == NULL || strlen(extensions) == 0) {
-        return;
-    }
-
-    //    Image Files;png,jpg,jpeg|Sound Files;mp3,wav|All Files;*
-    char* extensions_tok = malloc(sizeof(char) * (1+ strlen(extensions)));
-    extensions_tok = strcpy(extensions_tok, extensions);
-    char* extensions_tok_beginning = extensions_tok;
-
-    char *extension_filters;
-    char *name_or_filters;
-    char *ext;
-    while ((extension_filters = strtok_r(extensions_tok, "|", &extensions_tok))) {
-        puts(extension_filters);
-        int i = 0;
-        GtkFileFilter* filter = gtk_file_filter_new();
-        if (extension_filters[0] == ';') { // no filter name
-            ++i;
-        }
-        while ((name_or_filters = strtok_r(extension_filters, ";", &extension_filters))) {
-            puts(name_or_filters);
-            if (i == 0) {
-                // Filter Name
-                gtk_file_filter_set_name(filter, name_or_filters);
-            } else {
-                // Filter extentions
-                while ((ext = strtok_r(name_or_filters, ",", &name_or_filters))) {
-                    puts(ext);
-                    if (ext[0] == '*') {
-                        gtk_file_filter_add_pattern(filter, ext);
-                    } else {
-                        char* ext_s;// = "*.";
-                        ext_s = malloc(3 * sizeof(char));
-                        ext_s = strcpy(ext_s, "*.");
-                        ext_s = strcat_realloc(ext_s, ext);
-                        gtk_file_filter_add_pattern(filter, ext_s);
-                        free(ext_s);
-                    }
-                }
-            }
-            ++i;
-        }
-        gtk_file_chooser_add_filter((GtkFileChooser*) dialog, filter);
-    }
-
-    free(extensions_tok_beginning);
+    cb(DialogSaveFilePanel(title, directory, defaultName, filters));
 }

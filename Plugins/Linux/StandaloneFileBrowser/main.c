@@ -1,9 +1,8 @@
 #include <stdio.h>
-#include <gtk/gtk.h>
 #include <malloc.h>
 #include "library.h"
 
-int main(int argc, char *argv[]) {
+int main() {
     DialogInit();
     const char* folders = DialogOpenFolderPanel("Unity Open Folder", "/", true);
     printf("Folders selected: %s\n", folders);
