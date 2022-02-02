@@ -1,0 +1,15 @@
+{
+  "name": "net.shutosg.unity-standalone-file-browser",
+  "displayName": "StandaloneFileBrowser",
+  "author": {
+    "name": "gkngkc",
+    "url": "https://github.com/gkngkc"
+  },
+  "version": "1.0.0",
+  "unity": "2020.3",
+  "description": "A simple wrapper for native file dialogs on Windows/Mac/Linux.",
+  "keywords": [
+  ],
+  "license": "MIT",
+  "dependencies": {}
+}
