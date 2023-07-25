@@ -1,0 +1,29 @@
+{
+  "name": "eu.netherlands3d.filebrowser",
+  "displayName": "Netherlands 3D - Filebrowser",
+  "version": "1.1.0",
+  "unity": "2022.2",
+  "description": "",
+  "type": "library",
+  "keywords": [
+    "netherlands3d",
+    "digital twin",
+    "filebrowser"
+  ],
+  "license": "EUPL-1.2",
+  "documentationUrl": "https://github.com/Netherlands3D/Coordinates/blob/main/README.md",
+  "licensesUrl": "https://github.com/Netherlands3D/Coordinates/blob/main/LICENSE.txt",
+  "changelogURL": "https://github.com/Netherlands3D/Coordinates/blob/main/CHANGELOG.md",
+  "hideInEditor": false,
+  "author": {
+    "name": "Netherlands3D",
+    "url": "https://www.netherlands3d.eu"
+  },
+"samples": [
+        {
+            "displayName": "select files",
+            "description": "show names of selected files",
+            "path": "Samples~/showFileNames"
+        }
+]
+}
