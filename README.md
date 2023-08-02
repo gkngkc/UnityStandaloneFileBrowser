@@ -8,11 +8,18 @@ A simple wrapper for native file dialogs on Windows/Mac/Linux.
 - File extension filter.
 - Mono/IL2CPP backends supported.
 - Linux support by [Ricardo Rodrigues](https://github.com/RicardoEPRodrigues).
-- Basic WebGL support.
+- WebGL supprt on Buttons.
 
-[Download Package](https://github.com/gkngkc/UnityStandaloneFileBrowser/releases/download/1.2/StandaloneFileBrowser.unitypackage)
 
-Example usage:
+Example Usage in interface:
+
+add the script "FileOpen.cs" to the button.
+![Alt text](/Images/AddSriptToButton.png?raw=true)
+
+the selected files are copied to application.persistenDatapath.
+the filename(s) are sent as a string to the functions in OnFilesSelected. when there are multiple files selected, they are seperated with a comma ",".
+
+Example usage in code:
 
 ```csharp
 // Open file

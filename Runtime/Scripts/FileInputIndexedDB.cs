@@ -36,14 +36,17 @@ public class FileInputIndexedDB : MonoBehaviour
     private static extern void SyncFilesFromIndexedDB(string callbackObject,string callbackMethod);
     [DllImport("__Internal")]
     private static extern void SyncFilesToIndexedDB(string callbackObject, string callbackMethod);
-    [DllImport("__Internal")]
-    private static extern void ClearFileInputFields();
+
+    
+
+    //[DllImport("__Internal")]
+    //private static extern void ClearFileInputFields();
     Action<string> callbackAdress;
     private List<string> filenames = new List<string>();
     private int numberOfFilesToLoad = 0;
     private int fileCount = 0;
 
-    [SerializeField]
+    //[SerializeField]
     private UnityEvent<string> filesImportedEvent;
 
     [SerializeField]
@@ -117,7 +120,7 @@ public class FileInputIndexedDB : MonoBehaviour
 
     public void IndexedDBUpdated() // called from SyncFilesFromIndexedDB
     {
-        ClearFileInputFields();
+        //ClearFileInputFields();
         ProcessAllFiles();
     }
 
@@ -146,7 +149,7 @@ public class FileInputIndexedDB : MonoBehaviour
     public void ClearDatabase(bool succes)
     {
 #if !UNITY_EDITOR && UNITY_WEBGL
-        ClearFileInputFields();
+       // ClearFileInputFields();
         filenames.Clear();
         if (succes)
         {

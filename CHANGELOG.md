@@ -7,6 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.1.0]
 
 ### Added
-* added webGL function to save selecte files to IndexedDatabase en return filenames
+* added functionality to button to let the user select files and save the files to application.persistentDatapath in webgl and standalone.
 * Extracted https://github.com/Amsterdam/Netherlands3D/tree/main/Packages/Netherlands3D/Core/Runtime/Scripts/Coordinates 
   into its own package

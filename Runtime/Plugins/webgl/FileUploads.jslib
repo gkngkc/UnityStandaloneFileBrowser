@@ -29,16 +29,17 @@ mergeInto(LibraryManager.library, {
             newInput.accept = acceptedExtentionsArray.toString();
 			newInput.multiple = multiFileSelect;
 			newInput.onclick = function() {
-				unityInstance.SendMessage(inputFieldName, 'ClickNativeButton');
+				SendMessage(inputFieldName, 'ClickNativeButton');
 			};
             newInput.onchange = function () {
                 window.ReadFiles(this.files);
             };
             newInput.style.cssText = 'display:none; cursor:pointer; opacity: 0; position: fixed; bottom: 0; left: 0; z-index: 2; width: 0px; height: 0px;';
+
             document.body.appendChild(newInput);
         };
 
-        window.InjectHiddenFileInput('geojson', '.json,.geojson', false);
+        
 
         //Support for dragging dropping files on browser window
         document.addEventListener("dragover", function (event) {
@@ -70,7 +71,7 @@ mergeInto(LibraryManager.library, {
         window.ReadFiles = function ReadFiles(SelectedFiles) {
             if (window.File && window.FileReader && window.FileList && window.Blob) {
                 window.ConnectToDatabaseAndReadFiles(SelectedFiles);
-                unityInstance.SendMessage('UserFileUploads', 'FileCount', SelectedFiles.length);
+                SendMessage('UserFileUploads', 'FileCount', SelectedFiles.length);
             } else {
                 alert("Bestanden inladen wordt helaas niet ondersteund door deze browser.");
             };
@@ -118,12 +119,12 @@ mergeInto(LibraryManager.library, {
             
             console.log("Saving file: " + newIndexedFilePath);
             dbRequest.onsuccess = function () {
-                unityInstance.SendMessage('UserFileUploads', 'LoadFile', filename);
+                SendMessage('UserFileUploads', 'LoadFile', filename);
                 console.log("File saved: " + newIndexedFilePath);
                 window.FileSaved();
             };
             dbRequest.onerror = function () {
-                unityInstance.SendMessage('UserFileUploads', 'LoadFileError', filename);
+                SendMessage('UserFileUploads', 'LoadFileError', filename);
                 alert("Could not save: " + newIndexedFilePath);
                 window.FileSaved();
             };
@@ -157,11 +158,11 @@ mergeInto(LibraryManager.library, {
                 xhr.open("PUT", url, false);
                 xhr.send(record.contents);
                 window.databaseConnection.close();
-                unityInstance.SendMessage(callbackObjectString, callbackMethodSuccessString);
+                SendMessage(callbackObjectString, callbackMethodSuccessString);
             };
             dbRequest.onerror = function () {
                 window.databaseConnection.close();
-                unityInstance.SendMessage(callbackObjectString, callbackMethodFailedString, filename);
+                SendMessage(callbackObjectString, callbackMethodFailedString, filename);
             };
         }
         dbConnectionRequest.onerror = function () {
@@ -198,7 +199,7 @@ mergeInto(LibraryManager.library, {
 				window.setTimeout(function() { 
 				  window.URL.revokeObjectURL(url);
 				  document.body.removeChild(a);
-				  unityInstance.SendMessage(callbackObjectString, callbackMethodString, fileNameString);
+				  SendMessage(callbackObjectString, callbackMethodString, fileNameString);
 				}, 0);
                 window.databaseConnection.close();
             };

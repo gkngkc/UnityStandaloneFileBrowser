@@ -8,19 +8,21 @@ mergeInto(LibraryManager.library, {
     DisplayDOMObjectWithID: function (id, display, x, y, width, height, offsetX, offsetY) {
         var idString = UTF8ToString(id);
         var targetDomObject = document.getElementById(idString);
-		var viewCanvas = document.getElementsByTagName("canvas")[0];
+		var viewCanvas = document.getElementById("unity-canvas");
 		
-		var heightScreenPercentage = viewCanvas.clientHeight / window.innerHeight * 100;
-		var widthScreenPercentage = viewCanvas.clientWidth / window.innerWidth * 100;
+		var viewcanvasRect = viewCanvas.getBoundingClientRect();
+		var left = viewcanvasRect.left;
+		var bottom = viewcanvasRect.bottom;
+		var canvasHeight = viewcanvasRect.height;
+		var canvasWidth = viewcanvasRect.width
 
-		var roundedOffsetX = Math.round(offsetX);
-		var roundedOffsetY = Math.round(offsetY);
-		
         if (targetDomObject != null) {
             targetDomObject.style.display = UTF8ToString(display);
-            targetDomObject.style.margin = "0px 0px calc(" + ((y + height) * heightScreenPercentage) + "vh - " + roundedOffsetY + "px) calc(" + (x * widthScreenPercentage) + "vw + " + roundedOffsetX + "px)";
-            targetDomObject.style.width = (width * widthScreenPercentage) + "vw";
-            targetDomObject.style.height = (height * heightScreenPercentage) + "vh";
+            
+            	targetDomObject.style.left=left+(x*canvasWidth)+"px";
+		targetDomObject.style.top=bottom-((y+height)*canvasHeight)+"px";
+		targetDomObject.style.width = (width)*canvasWidth + "px";
+            targetDomObject.style.height = (height)*canvasHeight + "px";
         } else {
             console.log("Interface.jslib->DisplayDOMObjectWithID: Cant find DOM object with id: " + idString + ".");
         }

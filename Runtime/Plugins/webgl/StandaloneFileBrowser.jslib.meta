@@ -21,6 +21,7 @@ PluginImporter:
         Exclude Linux64: 1
         Exclude LinuxUniversal: 1
         Exclude OSXUniversal: 1
+        Exclude WebGL: 0
         Exclude Win: 1
         Exclude Win64: 1
   - first:

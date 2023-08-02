@@ -11,9 +11,9 @@
     "filebrowser"
   ],
   "license": "EUPL-1.2",
-  "documentationUrl": "https://github.com/Netherlands3D/Coordinates/blob/main/README.md",
-  "licensesUrl": "https://github.com/Netherlands3D/Coordinates/blob/main/LICENSE.txt",
-  "changelogURL": "https://github.com/Netherlands3D/Coordinates/blob/main/CHANGELOG.md",
+  "documentationUrl": "https://github.com/Netherlands3D/FileBrowser/blob/main/README.md",
+  "licensesUrl": "https://github.com/Netherlands3D/FileBrowser/blob/main/LICENSE.txt",
+  "changelogURL": "https://github.com/Netherlands3D/FileBrowser/blob/main/CHANGELOG.md",
   "hideInEditor": false,
   "author": {
     "name": "Netherlands3D",

@@ -1,33 +1,30 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿
 using System.Runtime.InteropServices;
-using System.Security.AccessControl;
+
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.Video;
+
 
 namespace Netherlands3D.JavascriptConnection
 {
 	public class DrawHTMLOverCanvas : MonoBehaviour
 	{
 		[DllImport("__Internal")]
+		private static extern void AddFileInput(string inputName, string fileExtentions, bool multiSelect);
+		[DllImport("__Internal")]
 		private static extern void DisplayDOMObjectWithID(string id = "htmlID", string display = "none", float x = 0, float y = 0, float width = 0, float height = 0, float offsetX = 0, float offsetY = 0);
 
-
+		
 		[SerializeField]
 		private string htmlObjectID = "";
 
-		private Image image;
+		
 
 		[SerializeField]
-		private bool alignEveryUpdate = false;
+		private bool alignEveryUpdate = true;
 
-		private Rect screenSpaceRectangle;
+		
 
-		private void Awake()
-		{
-			image = GetComponent<Image>();
-		}
+		
 
 
 #if !UNITY_EDITOR && UNITY_WEBGL
@@ -53,33 +50,32 @@ namespace Netherlands3D.JavascriptConnection
 			htmlObjectID = id;
 			this.alignEveryUpdate = alignEveryUpdate;
 		}
+		public void SetupInput(string fileInputName, string fileExtentions,bool multiSelect)
+		{
+			AddFileInput(fileInputName, fileExtentions, multiSelect);
+		}
 
 		/// <summary>
 		/// Tell JavaScript to make a DOM object with htmlObjectID to align with the Image component
 		/// </summary>
 		private void AlignHTMLOverlay()
 		{
-			var screenSpaceRectangle = GetScreenSpaceRectangle();
 
+			Canvas canvas = GetComponent<RectTransform>().root.GetComponent<Canvas>();
+			float canvasheight = canvas.GetComponentInParent<RectTransform>().rect.height;
+			float canvaswidth = canvas.GetComponentInParent<RectTransform>().rect.width;
+			Vector3[] corners = new Vector3[4];
+			GetComponent<RectTransform>().GetWorldCorners(corners);
+			
 			DisplayDOMObjectWithID(htmlObjectID, "inline",
-				screenSpaceRectangle.x / Screen.width,
-				screenSpaceRectangle.y / Screen.height,
-				screenSpaceRectangle.width / Screen.width,
-				screenSpaceRectangle.height / Screen.height
-			);
+				corners[0].x / canvaswidth,
+				corners[0].y / canvasheight,
+				(corners[2].x - corners[0].x) / canvaswidth,
+				(corners[2].y - corners[0].y) / canvasheight
+			); ; ; ;
+			
 		}
 
-		/// <summary>
-		/// Get the Image its rectangle in screenspace
-		/// </summary>
-		/// <returns>Rectangle with screenspace position, width and height</returns>
-		private Rect GetScreenSpaceRectangle()
-		{
-			var size = Vector2.Scale(image.rectTransform.rect.size, image.rectTransform.lossyScale);
-			screenSpaceRectangle = new Rect(image.rectTransform.position.x, image.rectTransform.position.y, size.x, size.y);
-			screenSpaceRectangle.x -= (image.rectTransform.pivot.x * size.x);
-			screenSpaceRectangle.y -= (image.rectTransform.pivot.y * size.y) + size.y;
-			return screenSpaceRectangle;
-		}
+		
 	}
 }
