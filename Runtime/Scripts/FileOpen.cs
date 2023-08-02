@@ -56,7 +56,16 @@ public class FileOpen : MonoBehaviour
 
     public void openfile()
     {
-        string[] filenames = SFB.StandaloneFileBrowser.OpenFilePanel("select file(s)", "", fileExtentions, multiSelect);
+        string[] fileExtentionNames = fileExtentions.Split(',');
+        ExtensionFilter[] extentionfilters = new ExtensionFilter[1];
+        
+
+            extentionfilters[0] = new ExtensionFilter(fileExtentionNames[0], fileExtentionNames);
+
+
+        
+
+        string[] filenames = SFB.StandaloneFileBrowser.OpenFilePanel("select file(s)", "", extentionfilters, multiSelect);
         string resultingFiles = "";
         for (int i = 0; i < filenames.Length; i++)
         {
