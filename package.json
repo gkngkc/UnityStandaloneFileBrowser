@@ -1,9 +1,9 @@
 {
   "name": "eu.netherlands3d.filebrowser",
   "displayName": "Netherlands 3D - Filebrowser",
-  "version": "1.1.0",
+  "version": "1.3.0",
   "unity": "2022.2",
-  "description": "",
+  "description": "A file browser for unity standalone and WebGL platforms",
   "type": "library",
   "keywords": [
     "netherlands3d",
@@ -19,11 +19,11 @@
     "name": "Netherlands3D",
     "url": "https://www.netherlands3d.eu"
   },
-"samples": [
-        {
-            "displayName": "select files",
-            "description": "show names of selected files",
-            "path": "Samples~/showFileNames"
-        }
-]
+  "samples": [
+    {
+      "displayName": "Select files",
+      "description": "Show names of selected files",
+      "path": "Samples~/showFileNames"
+    }
+  ]
 }

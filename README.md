@@ -1,5 +1,7 @@
 # Unity Standalone File Browser
 
+> Fork from https://github.com/gkngkc/UnityStandaloneFileBrowser to provide WebGL support.
+
 A simple wrapper for native file dialogs on Windows/Mac/Linux.
 
 - Works in editor and runtime.
@@ -8,16 +10,15 @@ A simple wrapper for native file dialogs on Windows/Mac/Linux.
 - File extension filter.
 - Mono/IL2CPP backends supported.
 - Linux support by [Ricardo Rodrigues](https://github.com/RicardoEPRodrigues).
-- WebGL supprt on Buttons.
-
+- WebGL support on Buttons.
 
 Example Usage in interface:
 
-add the script "FileOpen.cs" to the button.
+Add the script "FileOpen.cs" to the button.
 ![Alt text](/Images/AddSriptToButton.png?raw=true)
 
-the selected files are copied to application.persistenDatapath.
-the filename(s) are sent as a string to the functions in OnFilesSelected. when there are multiple files selected, they are seperated with a comma ",".
+The selected files are copied to application.persistentDatapath.
+The filename(s) are sent as a string to the functions in OnFilesSelected. when there are multiple files selected, they are seperated with a comma ",".
 
 Example usage in code:
 

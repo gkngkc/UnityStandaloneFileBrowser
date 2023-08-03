@@ -1,27 +1,9 @@
-/* Copyright(C)  X Gemeente
-                 X Amsterdam
-                 X Economic Services Departments
-Licensed under the EUPL, Version 1.2 or later (the "License");
-You may not use this work except in compliance with the License. You may obtain a copy of the License at:
-https://joinup.ec.europa.eu/software/page/eupl
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
-implied. See the License for the specific language governing permissions and limitations under the License.
-*/
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.IO;
 using System;
-using UnityEngine.UI;
 using System.Runtime.InteropServices;
 using UnityEngine.Events;
-//using Netherlands3D.ModelParsing;
-//using Netherlands3D.Traffic.VISSIM;
-//using Netherlands3D.Interface;
-//using Netherlands3D.Events;
-
 
 /// <summary>
 /// This system handles the user file uploads.
@@ -30,47 +12,38 @@ using UnityEngine.Events;
 /// </summary>
 public class FileInputIndexedDB : MonoBehaviour
 {
+    [SerializeField] private string sendMessageObjectName = "UserFileUploads";
+
+    public UnityEvent<string> filesImportedEvent;
+
     [DllImport("__Internal")]
     private static extern void InitializeIndexedDB(string dataPath);
+    
     [DllImport("__Internal")]
     private static extern void SyncFilesFromIndexedDB(string callbackObject,string callbackMethod);
+
     [DllImport("__Internal")]
     private static extern void SyncFilesToIndexedDB(string callbackObject, string callbackMethod);
 
-    
-
-    //[DllImport("__Internal")]
-    //private static extern void ClearFileInputFields();
-    Action<string> callbackAdress;
+    private Action<string> callbackAddress;
     private List<string> filenames = new List<string>();
     private int numberOfFilesToLoad = 0;
     private int fileCount = 0;
-
-    //[SerializeField]
-    private UnityEvent<string> filesImportedEvent;
-
-    [SerializeField]
-    //private BoolEvent clearDataBaseEvent;
-
-    private string sendMessageObjectName = "UserFileUploads";
 
     private void Awake()
     {
         //This name is required so .SendMessage can send messages back to this object from FileUploads.jslib
         this.gameObject.name = sendMessageObjectName;
 
-        //if (clearDataBaseEvent)
-        //    clearDataBaseEvent.AddListenerStarted(ClearDatabase);
-
 #if !UNITY_EDITOR && UNITY_WEBGL
         InitializeIndexedDB(Application.persistentDataPath);
 #endif
     }
 
-    public void SetCallbackAdress(Action<string> callback)
+    public void SetCallbackAddress(Action<string> callback)
     {
         Debug.Log("Callback set for FileInputIndexedDB");
-        callbackAdress = callback;
+        callbackAddress = callback;
     }
 
     // Called from javascript, the total number of files that are being loaded.
@@ -120,24 +93,21 @@ public class FileInputIndexedDB : MonoBehaviour
 
     public void IndexedDBUpdated() // called from SyncFilesFromIndexedDB
     {
-        //ClearFileInputFields();
         ProcessAllFiles();
     }
 
     void ProcessAllFiles()
     {
-        //LoadingScreen.Instance.Hide();
-
         var files = string.Join(",", filenames);
-        if (callbackAdress == null)
+        if (callbackAddress == null)
         {
             Debug.Log("FileInputIndexedDB: No callback set. Using default file import event.");
             filesImportedEvent.Invoke(files);
         }
         else
         {
-            callbackAdress(files);
-            callbackAdress = null;
+            callbackAddress(files);
+            callbackAddress = null;
         }
     }
 
@@ -149,7 +119,6 @@ public class FileInputIndexedDB : MonoBehaviour
     public void ClearDatabase(bool succes)
     {
 #if !UNITY_EDITOR && UNITY_WEBGL
-       // ClearFileInputFields();
         filenames.Clear();
         if (succes)
         {

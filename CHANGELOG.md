@@ -4,9 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.0]
+## [1.3.0] - 2023-08-03
 
 ### Added
-* added functionality to button to let the user select files and save the files to application.persistentDatapath in webgl and standalone.
-* Extracted https://github.com/Amsterdam/Netherlands3D/tree/main/Packages/Netherlands3D/Core/Runtime/Scripts/Coordinates 
-  into its own package
+
+* Added functionality to button to let the user select files and save the files to application.persistentDatapath in 
+  webgl and standalone.
+
+## [1.2.0] - 2018-11-06
+
+All releases prior to 1.3 are made in the original repository; to provide a modicum of continuity this fork will 
+continue on from 1.3.
+
+See https://github.com/gkngkc/UnityStandaloneFileBrowser/releases/tag/1.2
