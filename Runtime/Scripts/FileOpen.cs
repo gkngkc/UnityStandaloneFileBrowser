@@ -9,7 +9,7 @@ using Netherlands3D.JavascriptConnection;
 public class FileOpen : MonoBehaviour
 {
     [Tooltip("Allowed file input selections")]
-    [SerializeField] private string fileExtentions = ".csv";
+    [SerializeField] private string fileExtentions = "csv";
 
     [Tooltip("Allowed selection multiple files")]
     [SerializeField] private bool multiSelect = false;
