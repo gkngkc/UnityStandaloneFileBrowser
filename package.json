@@ -1,7 +1,7 @@
 {
   "name": "eu.netherlands3d.filebrowser",
   "displayName": "Netherlands 3D - Filebrowser",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "unity": "2022.2",
   "description": "A file browser for unity standalone and WebGL platforms",
   "type": "library",
